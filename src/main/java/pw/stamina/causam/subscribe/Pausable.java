@@ -22,7 +22,11 @@
 
 package pw.stamina.causam.subscribe;
 
-public interface Subscription<T> extends Pausable {
+public interface Pausable {
 
-    void call(T event);
+    void pause();
+
+    void resume();
+
+    boolean isPaused();
 }
