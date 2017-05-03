@@ -22,11 +22,9 @@
 
 package pw.stamina.causam.scan;
 
-import pw.stamina.causam.subscribe.Subscription;
-
-import java.util.Set;
+import pw.stamina.causam.scan.result.ScanResult;
 
 public interface SubscriberScanningStrategy {
 
-    Set<Subscription<?>> scan(Object handle);
+    ScanResult scan(Object subscriber) throws ScanFailedException;
 }

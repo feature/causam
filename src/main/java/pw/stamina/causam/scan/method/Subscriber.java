@@ -20,16 +20,15 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.scan.method;
 
-import java.util.List;
-import java.util.function.Predicate;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface Subscription<T> extends Pausable {
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Subscriber {
 
-    Object getSubscriber();
-
-    void call(T event) throws Exception;
-
-    List<Predicate<T>> getFilters();
 }

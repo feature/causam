@@ -20,16 +20,11 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.scan;
 
-import java.util.List;
-import java.util.function.Predicate;
+public class ScanFailedException extends RuntimeException {
 
-public interface Subscription<T> extends Pausable {
-
-    Object getSubscriber();
-
-    void call(T event) throws Exception;
-
-    List<Predicate<T>> getFilters();
+    public ScanFailedException(String message) {
+        super(message);
+    }
 }

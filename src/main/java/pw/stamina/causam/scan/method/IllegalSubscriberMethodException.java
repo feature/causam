@@ -20,16 +20,22 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.scan.method;
 
-import java.util.List;
-import java.util.function.Predicate;
+import pw.stamina.causam.scan.ScanFailedException;
 
-public interface Subscription<T> extends Pausable {
+import java.lang.reflect.Method;
 
-    Object getSubscriber();
+public final class IllegalSubscriberMethodException extends ScanFailedException {
+    private final Method method;
 
-    void call(T event) throws Exception;
+    IllegalSubscriberMethodException(Method method,
+                                     String message) {
+        super(message);
+        this.method = method;
+    }
 
-    List<Predicate<T>> getFilters();
+    public Method getMethod() {
+        return method;
+    }
 }

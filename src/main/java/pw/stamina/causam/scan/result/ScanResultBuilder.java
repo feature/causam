@@ -20,16 +20,27 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.scan.result;
 
-import java.util.List;
-import java.util.function.Predicate;
+import pw.stamina.causam.subscribe.Subscription;
 
-public interface Subscription<T> extends Pausable {
+import java.util.*;
 
-    Object getSubscriber();
+public final class ScanResultBuilder {
+    private final Set<Subscription<?>> subscriptions;
 
-    void call(T event) throws Exception;
+    public ScanResultBuilder() {
+        this.subscriptions = new HashSet<>();
+    }
 
-    List<Predicate<T>> getFilters();
+    public ScanResultBuilder addSubscription(Subscription<?> subscription) {
+        this.subscriptions.add(subscription);
+        return this;
+    }
+
+    public ScanResult build() {
+        return this.subscriptions.isEmpty()
+                ? EmptyScanResult.INSTANCE
+                : new ImmutableScanResult(this.subscriptions);
+    }
 }

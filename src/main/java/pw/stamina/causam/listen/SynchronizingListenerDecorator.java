@@ -20,16 +20,26 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.listen;
 
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.Objects;
 
-public interface Subscription<T> extends Pausable {
+public final class SynchronizingListenerDecorator<T> implements Listener<T> {
+    private final Listener<T> listener;
 
-    Object getSubscriber();
+    private SynchronizingListenerDecorator(Listener<T> listener) {
+        this.listener = listener;
+    }
 
-    void call(T event) throws Exception;
+    @Override
+    public void call(T event) throws Exception {
+        synchronized (this.listener) {
+            this.listener.call(event);
+        }
+    }
 
-    List<Predicate<T>> getFilters();
+    public static <T> Listener<T> of(Listener<T> listener) {
+        Objects.requireNonNull(listener, "listener");
+        return new SynchronizingListenerDecorator<>(listener);
+    }
 }

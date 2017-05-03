@@ -20,16 +20,10 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.listen;
 
-import java.util.List;
-import java.util.function.Predicate;
-
-public interface Subscription<T> extends Pausable {
-
-    Object getSubscriber();
+@FunctionalInterface
+public interface Listener<T> {
 
     void call(T event) throws Exception;
-
-    List<Predicate<T>> getFilters();
 }

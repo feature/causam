@@ -22,13 +22,23 @@
 
 package pw.stamina.causam;
 
+import pw.stamina.causam.scan.SubscriberScanningStrategy;
+import pw.stamina.causam.subscribe.Subscription;
+
+import java.util.function.Predicate;
+
 public interface EventBus {
 
-    String getIdentifier();
+    String identifier();
 
-    boolean register(Object handle);
+    PublicationExceptionHandler getPublicationExceptionHandler();
 
-    boolean unregister(Object handle);
+    boolean register(Subscription<?> subscription);
+
+    boolean registerWith(Object subscriber,
+                         SubscriberScanningStrategy scanningStrategy);
+
+    boolean unregisterIf(Predicate<Subscription<?>> filter);
 
     <T> void now(T event);
 

@@ -20,16 +20,27 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.scan.method;
 
-import java.util.List;
-import java.util.function.Predicate;
+import pw.stamina.causam.listen.Listener;
 
-public interface Subscription<T> extends Pausable {
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-    Object getSubscriber();
+final class MethodInvokingListener<T> implements Listener<T> {
+    private final Object handle;
+    private final Method target;
 
-    void call(T event) throws Exception;
+    MethodInvokingListener(Object handle,
+                           Method target) {
+        this.handle = handle;
+        this.target = target;
+    }
 
-    List<Predicate<T>> getFilters();
+    @Override
+    public void call(T event) throws
+            InvocationTargetException,
+            IllegalAccessException {
+        this.target.invoke(this.handle, event);
+    }
 }
