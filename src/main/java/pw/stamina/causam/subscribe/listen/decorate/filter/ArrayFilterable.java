@@ -20,10 +20,32 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam;
+package pw.stamina.causam.subscribe.listen.decorate.filter;
 
-public interface PublicationExceptionHandler {
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 
-    //TODO: Add more information
-    void handleException(Exception exception);
+final class ArrayFilterable<T> implements Filterable<T> {
+    private final Predicate<T>[] filters;
+
+    ArrayFilterable(Predicate<T>[] filters) {
+        this.filters = filters;
+    }
+
+    @Override
+    public boolean passesFilters(T event) {
+        for (Predicate<T> filter : filters) {
+            if (!filter.test(event)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public List<Predicate<T>> getFilters() {
+        return Arrays.asList(filters);
+    }
 }

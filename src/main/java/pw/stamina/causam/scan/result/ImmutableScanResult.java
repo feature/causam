@@ -36,6 +36,6 @@ final class ImmutableScanResult implements ScanResult {
 
     @Override
     public Set<Subscription<?>> getSubscriptions() {
-        return Collections.unmodifiableSet(this.subscriptions);
+        return Collections.unmodifiableSet(subscriptions);
     }
 }

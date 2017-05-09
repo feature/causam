@@ -20,27 +20,12 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.scan.method.extract;
 
-import pw.stamina.causam.subscribe.listen.Listener;
-
-import java.lang.reflect.InvocationTargetException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
+public interface AnnotationExtractor<T extends Annotation> {
 
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
-
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
-    }
+    T extract(Method method);
 }

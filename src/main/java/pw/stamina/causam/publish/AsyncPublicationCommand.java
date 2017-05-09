@@ -20,27 +20,13 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.publish;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+import java.util.concurrent.TimeUnit;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+public interface AsyncPublicationCommand {
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
+    void asynchronously();
 
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
-
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
-    }
+    void asynchronously(long timeout, TimeUnit unit);
 }

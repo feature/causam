@@ -20,27 +20,37 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.subscribe.listen.decorate.filter;
 
 import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+public final class FilterableListenerDecorator<T>
+        implements SubscriptionListenerDecorator<T, Filterable> {
+    private final Filterable<T> filterable;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
+    private FilterableListenerDecorator(Filterable<T> filterable) {
+        this.filterable = filterable;
     }
 
     @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public Listener<T> decorate(Listener<T> decorating) {
+        return event -> {
+            if (!filterable.passesFilters(event)) {
+                return;
+            }
+
+            decorating.publish(event);
+        };
+    }
+
+    @Override
+    public Class<Filterable> getDecorationType() {
+        return Filterable.class;
+    }
+
+    @Override
+    public Filterable<T> getDecoration() {
+        return filterable;
     }
 }

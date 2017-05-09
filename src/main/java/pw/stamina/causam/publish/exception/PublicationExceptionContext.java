@@ -20,27 +20,32 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.publish.exception;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.Subscription;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+public final class PublicationExceptionContext {
+    private final Subscription<?> subscription;
+    private final String busIdentifier;
+    private final Object event;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
+    public PublicationExceptionContext(Subscription<?> subscription,
+                                       String busIdentifier,
+                                       Object event) {
+        this.subscription = subscription;
+        this.busIdentifier = busIdentifier;
+        this.event = event;
     }
 
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public Subscription<?> getSubscription() {
+        return subscription;
+    }
+
+    public String getBusIdentifier() {
+        return busIdentifier;
+    }
+
+    public Object getEvent() {
+        return event;
     }
 }

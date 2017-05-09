@@ -22,14 +22,24 @@
 
 package pw.stamina.causam.subscribe;
 
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.Map;
 
-public interface Subscription<T> extends Pausable {
+/**
+ * Defines an event subscription, its properties
+ * and how events should be published to the
+ * subscription listener.
+ *
+ * @param <T> the accepted event type
+ */
+public interface Subscription<T> {
 
     Object getSubscriber();
 
     void call(T event) throws Exception;
 
-    List<Predicate<T>> getFilters();
+    <R> R getDecoration(Class<R> decorationType);
+
+    <R> boolean hasDecoration(Class<R> decorationType);
+
+    Map<Class<?>, ?> getDecorations();
 }

@@ -22,25 +22,26 @@
 
 package pw.stamina.causam.scan.method;
 
-import pw.stamina.causam.subscribe.listen.Listener;
-
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
+enum StandardSubscriberMethodValidator
+        implements SubscriberMethodValidator {
+    INSTANCE;
 
     @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public void validate(Method method) throws IllegalSubscriberMethodException {
+        if (!methodHasOneParameter(method)) {
+            throw new IllegalSubscriberMethodException(method,
+                    "An annotated subscriber method may only have exactly " +
+                            "1 parameter. Method: " + method.getName() + " in " +
+                            "class: " + method.getDeclaringClass());
+        }
+
+        //TODO: Check other method conditions?
+        //TODO: Disallow synchronized methods, use annotation instead
+    }
+
+    private static boolean methodHasOneParameter(Method method) {
+        return method.getParameterCount() != 1;
     }
 }

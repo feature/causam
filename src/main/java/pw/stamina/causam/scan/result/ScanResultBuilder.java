@@ -30,17 +30,22 @@ public final class ScanResultBuilder {
     private final Set<Subscription<?>> subscriptions;
 
     public ScanResultBuilder() {
-        this.subscriptions = new HashSet<>();
+        subscriptions = new HashSet<>();
     }
 
     public ScanResultBuilder addSubscription(Subscription<?> subscription) {
-        this.subscriptions.add(subscription);
+        Objects.requireNonNull(subscription, "subscription");
+        subscriptions.add(subscription);
         return this;
     }
 
     public ScanResult build() {
-        return this.subscriptions.isEmpty()
-                ? EmptyScanResult.INSTANCE
-                : new ImmutableScanResult(this.subscriptions);
+        return hasSubscriptions()
+                ? new ImmutableScanResult(subscriptions)
+                : EmptyScanResult.INSTANCE;
+    }
+
+    private boolean hasSubscriptions() {
+        return !subscriptions.isEmpty();
     }
 }

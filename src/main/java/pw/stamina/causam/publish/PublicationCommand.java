@@ -20,13 +20,9 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.publish;
 
-public interface Pausable {
+public interface PublicationCommand<T> {
 
-    void pause();
-
-    void resume();
-
-    boolean isPaused();
+    void now();
 }

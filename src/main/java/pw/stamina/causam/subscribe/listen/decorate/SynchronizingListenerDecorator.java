@@ -20,27 +20,40 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.subscribe.listen.decorate;
 
 import pw.stamina.causam.subscribe.listen.Listener;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+/**
+ *
+ *
+ * @param <T> the event type accepted by this listener
+ *            decorator and the listener it decorates
+ */
+public final class SynchronizingListenerDecorator<T> implements
+        SubscriptionListenerDecorator<T, SynchronizingListenerDecorator.Synchronizing> {
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
+    @Override
+    public Listener<T> decorate(Listener<T> decorating) {
+        return event -> {
+            synchronized (decorating) {
+                decorating.publish(event);
+            }
+        };
     }
 
     @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public Class<Synchronizing> getDecorationType() {
+        return Synchronizing.class;
+    }
+
+    @Override
+    public Synchronizing getDecoration() {
+        return Synchronizing.INSTANCE;
+    }
+
+    //TODO: Document dummy interface
+    enum Synchronizing {
+        INSTANCE
     }
 }

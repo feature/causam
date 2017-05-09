@@ -20,27 +20,27 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.subscribe.listen.decorate.pause;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+/**
+ * Primitive {@code boolean} based {@link Pausable}
+ * implementation.
+ */
+final class SimplePausable implements Pausable {
+    private boolean paused;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
+    @Override
+    public boolean isPaused() {
+        return paused;
     }
 
     @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public void pause() {
+        paused = true;
+    }
+
+    @Override
+    public void resume() {
+        paused = false;
     }
 }

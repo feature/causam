@@ -20,27 +20,25 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.publish.exception;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+/**
+ * This class handles {@link Exception}s thrown during
+ * event publication. This specially only handles {@link
+ * Exception}s because {@link Error}s and other {@link
+ * Throwable}s is considered to be outside the scope of
+ * responsibility of the event bus.
+ */
+public interface PublicationExceptionHandler {
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
-
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
-    }
+    /**
+     * Handles an {@link Exception} thrown while publishing
+     * an event.
+     *
+     * @param exception exception throw during publication
+     * @param context   context of the publication in which
+     *                  the exception was thrown
+     */
+    void handleException(Exception exception,
+                         PublicationExceptionContext context);
 }

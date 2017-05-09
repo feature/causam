@@ -20,27 +20,16 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.subscribe.listen;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+@FunctionalInterface
+public interface Listener<T> {
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
-
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
-    }
+    /**
+     * Publishes the {@code event} to this listener.
+     *
+     * @param event event being published
+     * @throws Exception delegates
+     */
+    void publish(T event) throws Exception;
 }

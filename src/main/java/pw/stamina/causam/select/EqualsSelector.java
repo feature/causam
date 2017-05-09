@@ -20,27 +20,18 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.select;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+public final class EqualsSelector<T> implements Selector {
+    private final Class<T> key;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
+    public EqualsSelector(Class<T> key) {
+        this.key = key;
     }
 
+
     @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public boolean canSelect(Class<?> key) {
+        return this.key == key;
     }
 }

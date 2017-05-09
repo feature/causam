@@ -20,51 +20,50 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.subscribe.listen.decorate.pause;
 
 import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator;
 
-import java.util.Collections;
-import java.util.Map;
+/**
+ * Decorates a {@link Listener} to adopt pausable functionality.
+ *
+ * @param <T> the event type accept by the decorated listener
+ */
+public final class PausableSubscriptionListenerDecorator<T>
+        implements SubscriptionListenerDecorator<T, Pausable> {
+    private final Pausable pausable;
 
-final class ImmutableSubscription<T> implements Subscription<T> {
-    private final Object subscriber;
-    private final Listener<T> listener;
-    private final Map<Class<?>, ?> decorations;
-
-    ImmutableSubscription(Object subscriber,
-                          Listener<T> listener,
-                          Map<Class<?>, ?> decorations) {
-        this.subscriber = subscriber;
-        this.listener = listener;
-        this.decorations = decorations;
+    private PausableSubscriptionListenerDecorator(Pausable pausable) {
+        this.pausable = pausable;
     }
 
     @Override
-    public Object getSubscriber() {
-        return subscriber;
+    public Listener<T> decorate(Listener<T> decorating) {
+        return event -> {
+            if (pausable.isPaused()) {
+                return;
+            }
+
+            decorating.publish(event);
+        };
     }
 
     @Override
-    public void call(T event) throws Exception {
-        listener.publish(event);
+    public Class<Pausable> getDecorationType() {
+        return Pausable.class;
     }
 
     @Override
-    public <R> R getDecoration(Class<R> decorationType) {
-        @SuppressWarnings("unchecked")
-        R decoration = (R) decorations.get(decorationType);
-
-        return decoration;
+    public Pausable getDecoration() {
+        return pausable;
     }
 
-    @Override
-    public <R> boolean hasDecoration(Class<R> decorationType) {
-        return decorations.containsKey(decorationType);
+    public static <T> PausableSubscriptionListenerDecorator<T> simple() {
+        return new PausableSubscriptionListenerDecorator<>(Pausable.simple());
     }
 
-    @Override
-    public Map<Class<?>, ?> getDecorations() {
-        return Collections.unmodifiableMap(decorations);
+    public static <T> PausableSubscriptionListenerDecorator<T> atomic() {
+        return new PausableSubscriptionListenerDecorator<>(Pausable.atomic());
     }
 }

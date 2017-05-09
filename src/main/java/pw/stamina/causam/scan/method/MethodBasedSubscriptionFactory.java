@@ -22,25 +22,12 @@
 
 package pw.stamina.causam.scan.method;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.Subscription;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
+interface MethodBasedSubscriptionFactory {
 
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
-
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
-    }
+    Subscription<?> createSubscription(Object subscriber,
+                                       Method method);
 }

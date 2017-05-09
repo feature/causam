@@ -25,22 +25,55 @@ package pw.stamina.causam;
 import pw.stamina.causam.publish.PublicationCommand;
 import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
 import pw.stamina.causam.registry.SubscriptionRegistrationFacade;
+import pw.stamina.causam.registry.SubscriptionRegistry;
 
 import java.util.concurrent.TimeUnit;
 
-public interface EventBus {
+public final class ImmutableEventBus implements EventBus {
+    private final String identifier;
+    private final SubscriptionRegistry subscriptions;
+    private final PublicationExceptionHandler exceptionHandler;
 
-    String getIdentifier();
+    ImmutableEventBus(String identifier,
+                      SubscriptionRegistry subscriptions,
+                      PublicationExceptionHandler exceptionHandler) {
+        this.identifier = identifier;
+        this.subscriptions = subscriptions;
+        this.exceptionHandler = exceptionHandler;
+    }
 
-    SubscriptionRegistrationFacade getRegistrationFacade();
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
 
-    PublicationExceptionHandler getExceptionHandler();
+    @Override
+    public PublicationExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
 
-    <T> void now(T event);
+    @Override
+    public SubscriptionRegistrationFacade getRegistrationFacade() {
+        return null;
+    }
 
-    <T> void async(T event);
+    @Override
+    public <T> void now(T event) {
 
-    <T> void async(T event, long timeout, TimeUnit unit);
+    }
 
-    <T> PublicationCommand<T> publish(T event);
+    @Override
+    public <T> void async(T event) {
+
+    }
+
+    @Override
+    public <T> void async(T event, long timeout, TimeUnit unit) {
+
+    }
+
+    @Override
+    public <T> PublicationCommand<T> publish(T event) {
+        return null;
+    }
 }

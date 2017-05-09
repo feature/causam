@@ -20,27 +20,35 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.scan.method.model;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.listen.decorate.pause.PausableSubscriptionListenerDecorator;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.function.Supplier;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Pausable {
 
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
+    PausableType value() default PausableType.SIMPLE;
 
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    enum PausableType {
+        NONE(null),
+        SIMPLE(PausableSubscriptionListenerDecorator::simple),
+        ATOMIC(PausableSubscriptionListenerDecorator::atomic);
+
+        private final Supplier<PausableSubscriptionListenerDecorator> factory;
+
+        PausableType(Supplier<PausableSubscriptionListenerDecorator> factory) {
+            this.factory = factory;
+        }
+
+        public final PausableSubscriptionListenerDecorator create() {
+            return factory.get();
+        }
     }
 }

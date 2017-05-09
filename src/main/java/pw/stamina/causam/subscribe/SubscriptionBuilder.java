@@ -22,54 +22,44 @@
 
 package pw.stamina.causam.subscribe;
 
-import pw.stamina.causam.listen.Listener;
-import pw.stamina.causam.listen.SynchronizingListenerDecorator;
+import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 public final class SubscriptionBuilder<T> {
     private Object subscriber;
     private Listener<T> listener;
-    private List<Predicate<T>> filters;
-
-    private boolean synchronizing;
+    private Map<Class<?>, Object> decorations;
 
     public SubscriptionBuilder<T> subscriber(Object subscriber) {
         Objects.requireNonNull(subscriber, "subscriber");
-
-        //TODO: Disallow setting another subscriber
         this.subscriber = subscriber;
         return this;
     }
 
     public SubscriptionBuilder<T> listener(Listener<T> listener) {
         Objects.requireNonNull(listener, "listener");
-
-        //TODO: Disallow setting another listener
         this.listener = listener;
         return this;
     }
 
-    public SubscriptionBuilder<T> addFilter(Predicate<T> filter) {
-        Objects.requireNonNull(filter, "filter");
+    public <R> SubscriptionBuilder<T> decorate(
+            SubscriptionListenerDecorator<T, R> decorator) {
+        Class<R> decorationType = decorator.getDecorationType();
+        R decoration = decorator.getDecoration();
 
-        if (this.filters == null) {
-            this.filters = new ArrayList<>();
+        Objects.requireNonNull(decorationType, "decorationType");
+        Objects.requireNonNull(decoration, "decoration");
+
+        if (decorations.containsKey(decorationType)) {
+            //TODO: Throw exception
         }
 
-        this.filters.add(filter);
-        return this;
-    }
+        listener = decorator.decorate(listener);
+        decorations.put(decorationType, decoration);
 
-    public SubscriptionBuilder<T> synchronizing() {
-        if (this.synchronizing) {
-            //TODO: Illegal state
-        }
-
-        this.synchronizing = true;
         return this;
     }
 
@@ -77,16 +67,8 @@ public final class SubscriptionBuilder<T> {
         //TODO: Validate state
 
         return new ImmutableSubscription<>(
-                this.subscriber,
-                this.prepareListener(),
-                this.filters);
-    }
-
-    private Listener<T> prepareListener() {
-        if (this.synchronizing) {
-            return SynchronizingListenerDecorator.of(this.listener);
-        }
-
-        return this.listener;
+                subscriber,
+                listener,
+                decorations);
     }
 }

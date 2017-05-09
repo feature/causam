@@ -23,24 +23,44 @@
 package pw.stamina.causam.scan.method;
 
 import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.scan.method.model.Synchronize;
+import pw.stamina.causam.subscribe.Subscription;
+import pw.stamina.causam.subscribe.SubscriptionBuilder;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
+enum StandardMethodBasedSubscriptionFactory
+        implements MethodBasedSubscriptionFactory {
+    INSTANCE;
 
     @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public Subscription<?> createSubscription(Object subscriber,
+                                              Method method) {
+        SubscriptionBuilder<?> builder = new SubscriptionBuilder<>();
+
+        assureAccessible(method);
+
+        if (shouldSynchronizeListener(method)) {
+            builder.synchronizeListener();
+        }
+
+        return builder
+                .subscriber(subscriber)
+                .listener(createListener(subscriber, method))
+                .build();
+    }
+
+    private static void assureAccessible(Method method) {
+        if (!method.isAccessible()) {
+            method.setAccessible(true);
+        }
+    }
+
+    private static boolean shouldSynchronizeListener(Method method) {
+        return method.isAnnotationPresent(Synchronize.class);
+    }
+
+    private static <T> Listener<T> createListener(Object subscriber, Method target) {
+        return new MethodInvokingListener<>(subscriber, target);
     }
 }

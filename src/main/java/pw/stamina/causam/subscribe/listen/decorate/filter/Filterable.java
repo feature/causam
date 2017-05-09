@@ -20,27 +20,30 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.subscribe.listen.decorate.filter;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+public interface Filterable<T> {
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
+    boolean passesFilters(T event);
 
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
+    List<Predicate<T>> getFilters();
 
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    @SuppressWarnings("unchecked")
+    static <T> Filterable<T> array(Collection<Predicate<T>> filters) {
+        Objects.requireNonNull(filters, "filters");
+
+        if (filters.isEmpty()) {
+            throw new IllegalArgumentException("filters must not be empty");
+        }
+
+        return new ArrayFilterable<>(
+                filters.stream()
+                        .peek(Objects::requireNonNull)
+                        .toArray(Predicate[]::new));
     }
 }

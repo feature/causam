@@ -20,15 +20,42 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.select;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import pw.stamina.causam.subscribe.Subscription;
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Synchronize {
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Supplier;
 
+public final class CachingSubscriptionSelectorService
+        implements SubscriptionSelectorService {
+    private final ConcurrentMap<Class<?>, List<Subscription<?>>>
+            cachedFlattenedKeyBasedSelectionResult;
+
+    public CachingSubscriptionSelectorService() {
+        this.cachedFlattenedKeyBasedSelectionResult = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> Iterable<Subscription<T>> selectSubscriptions(
+            Class<T> key, Supplier<Set<Subscription<?>>> subscriptions) {
+
+
+
+        return null;
+    }
+
+    @Override
+    public void notifySubscriptionAdded(Subscription<?> subscription) {
+
+    }
+
+    @Override
+    public void notifySubscriptionRemoved(Subscription<?> subscription) {
+
+    }
 }

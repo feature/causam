@@ -20,27 +20,15 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.subscribe.listen.decorate;
 
 import pw.stamina.causam.subscribe.listen.Listener;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+public interface SubscriptionListenerDecorator<T, R> {
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
+    Listener<T> decorate(Listener<T> decorating);
 
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
+    Class<R> getDecorationType();
 
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
-    }
+    R getDecoration();
 }

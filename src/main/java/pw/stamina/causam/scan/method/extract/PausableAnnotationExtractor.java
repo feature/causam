@@ -20,27 +20,21 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.scan.method.extract;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.scan.method.model.Pausable;
+import pw.stamina.causam.scan.method.model.Subscriber;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+public final class PausableAnnotationExtractor
+        extends AbstractCollisionCheckingAnnotationExtractor<Pausable> {
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
+    public PausableAnnotationExtractor() {
+        super(Pausable.class,
+                Subscriber::pausable,
+                PausableAnnotationExtractor::subscriberHasCollidingPausable);
     }
 
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    private static boolean subscriberHasCollidingPausable(Subscriber subscriber) {
+        return subscriber.pausable().value() != Pausable.PausableType.NONE;
     }
 }

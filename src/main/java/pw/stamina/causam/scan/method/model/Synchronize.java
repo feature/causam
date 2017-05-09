@@ -20,10 +20,13 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.listen;
+package pw.stamina.causam.scan.method.model;
 
-@FunctionalInterface
-public interface Listener<T> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    void call(T event) throws Exception;
-}
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Synchronize {}

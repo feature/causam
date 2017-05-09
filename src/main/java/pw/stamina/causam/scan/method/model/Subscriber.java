@@ -20,26 +20,18 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.listen;
+package pw.stamina.causam.scan.method.model;
 
-import java.util.Objects;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public final class SynchronizingListenerDecorator<T> implements Listener<T> {
-    private final Listener<T> listener;
+import static pw.stamina.causam.scan.method.model.Pausable.PausableType.NONE;
 
-    private SynchronizingListenerDecorator(Listener<T> listener) {
-        this.listener = listener;
-    }
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Subscriber {
 
-    @Override
-    public void call(T event) throws Exception {
-        synchronized (this.listener) {
-            this.listener.call(event);
-        }
-    }
-
-    public static <T> Listener<T> of(Listener<T> listener) {
-        Objects.requireNonNull(listener, "listener");
-        return new SynchronizingListenerDecorator<>(listener);
-    }
+    Pausable pausable() default @Pausable(NONE);
 }

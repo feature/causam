@@ -20,27 +20,23 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.registry;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.Subscription;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
+public interface SubscriptionRegistry {
 
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
-    }
+    boolean register(Subscription<?> subscription);
 
-    @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
-    }
+    boolean registerAll(Collection<Subscription<?>> subscription);
+
+    boolean unregisterIf(Predicate<Subscription<?>> filter);
+
+    Stream<Subscription<?>> findSubscriptions(Object subscriber);
+
+    <T> Collection<Subscription<T>> selectSubscriptions(Class<T> key);
 }

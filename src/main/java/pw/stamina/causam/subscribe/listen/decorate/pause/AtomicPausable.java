@@ -20,27 +20,35 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.subscribe.listen.decorate.pause;
 
-import pw.stamina.causam.subscribe.listen.Listener;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+/**
+ * {@link AtomicBoolean} based {@link Pausable}
+ * implementation.
+ *
+ * @implSpec thread safe
+ */
+final class AtomicPausable implements Pausable {
+    private final AtomicBoolean paused;
 
-final class MethodInvokingListener<T> implements Listener<T> {
-    private final Object handle;
-    private final Method target;
-
-    MethodInvokingListener(Object handle,
-                           Method target) {
-        this.handle = handle;
-        this.target = target;
+    AtomicPausable() {
+        this.paused = new AtomicBoolean();
     }
 
     @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public boolean isPaused() {
+        return paused.get();
+    }
+
+    @Override
+    public void pause() {
+        paused.set(true);
+    }
+
+    @Override
+    public void resume() {
+        paused.set(false);
     }
 }
