@@ -23,7 +23,10 @@
 package pw.stamina.causam.subscribe.listen.decorate.pause;
 
 import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.listen.decorate.AbstractSubscriptionListenerDecorator;
 import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator;
+
+import java.util.function.UnaryOperator;
 
 /**
  * Decorates a {@link Listener} to adopt pausable functionality.
@@ -31,32 +34,22 @@ import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator
  * @param <T> the event type accept by the decorated listener
  */
 public final class PausableSubscriptionListenerDecorator<T>
-        implements SubscriptionListenerDecorator<T, Pausable> {
-    private final Pausable pausable;
+        extends AbstractSubscriptionListenerDecorator<T, Pausable> {
 
     private PausableSubscriptionListenerDecorator(Pausable pausable) {
-        this.pausable = pausable;
+        super(Pausable.class,
+                pausable);
     }
 
     @Override
     public Listener<T> decorate(Listener<T> decorating) {
         return event -> {
-            if (pausable.isPaused()) {
+            if (decoration.isPaused()) {
                 return;
             }
 
             decorating.publish(event);
         };
-    }
-
-    @Override
-    public Class<Pausable> getDecorationType() {
-        return Pausable.class;
-    }
-
-    @Override
-    public Pausable getDecoration() {
-        return pausable;
     }
 
     public static <T> PausableSubscriptionListenerDecorator<T> simple() {

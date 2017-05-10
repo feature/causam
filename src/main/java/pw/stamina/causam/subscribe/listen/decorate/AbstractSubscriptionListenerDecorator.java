@@ -20,38 +20,28 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe.listen.decorate.filter;
+package pw.stamina.causam.subscribe.listen.decorate;
 
-import pw.stamina.causam.subscribe.listen.Listener;
-import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator;
+public abstract class AbstractSubscriptionListenerDecorator<T, R>
+        implements SubscriptionListenerDecorator<T, R> {
 
-public final class FilterableListenerDecorator<T>
-        implements SubscriptionListenerDecorator<T, Filterable> {
-    private final Filterable<T> filterable;
+    private final Class<R> decorationType;
+    protected final R decoration;
 
-    //TODO: Create way to instantiate this object
-    private FilterableListenerDecorator(Filterable<T> filterable) {
-        this.filterable = filterable;
+    protected AbstractSubscriptionListenerDecorator(
+            Class<R> decorationType,
+            R decoration) {
+        this.decorationType = decorationType;
+        this.decoration = decoration;
     }
 
     @Override
-    public Listener<T> decorate(Listener<T> decorating) {
-        return event -> {
-            if (!filterable.passesFilters(event)) {
-                return;
-            }
-
-            decorating.publish(event);
-        };
+    public final Class<R> getDecorationType() {
+        return decorationType;
     }
 
     @Override
-    public Class<Filterable> getDecorationType() {
-        return Filterable.class;
-    }
-
-    @Override
-    public Filterable<T> getDecoration() {
-        return filterable;
+    public final R getDecoration() {
+        return decoration;
     }
 }

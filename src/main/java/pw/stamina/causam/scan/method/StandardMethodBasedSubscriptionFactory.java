@@ -26,6 +26,8 @@ import pw.stamina.causam.subscribe.listen.Listener;
 import pw.stamina.causam.scan.method.model.Synchronize;
 import pw.stamina.causam.subscribe.Subscription;
 import pw.stamina.causam.subscribe.SubscriptionBuilder;
+import pw.stamina.causam.subscribe.listen.decorate.SynchronizingListenerDecorator;
+import pw.stamina.causam.subscribe.listen.decorate.pause.PausableSubscriptionListenerDecorator;
 
 import java.lang.reflect.Method;
 
@@ -36,12 +38,12 @@ enum StandardMethodBasedSubscriptionFactory
     @Override
     public Subscription<?> createSubscription(Object subscriber,
                                               Method method) {
-        SubscriptionBuilder<?> builder = new SubscriptionBuilder<>();
-
         assureAccessible(method);
 
+        SubscriptionBuilder<?> builder = new SubscriptionBuilder<>();
+
         if (shouldSynchronizeListener(method)) {
-            builder.synchronizeListener();
+            builder.decorate(SynchronizingListenerDecorator.get());
         }
 
         return builder

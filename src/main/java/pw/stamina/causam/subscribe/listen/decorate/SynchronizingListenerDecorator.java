@@ -24,14 +24,21 @@ package pw.stamina.causam.subscribe.listen.decorate;
 
 import pw.stamina.causam.subscribe.listen.Listener;
 
+import java.util.function.UnaryOperator;
+
 /**
  *
  *
  * @param <T> the event type accepted by this listener
  *            decorator and the listener it decorates
  */
-public final class SynchronizingListenerDecorator<T> implements
-        SubscriptionListenerDecorator<T, SynchronizingListenerDecorator.Synchronizing> {
+public final class SynchronizingListenerDecorator<T> extends
+        AbstractSubscriptionListenerDecorator<T, SynchronizingListenerDecorator.Synchronizing> {
+
+    private SynchronizingListenerDecorator() {
+        super(Synchronizing.class,
+                Synchronizing.INSTANCE);
+    }
 
     @Override
     public Listener<T> decorate(Listener<T> decorating) {
@@ -42,18 +49,12 @@ public final class SynchronizingListenerDecorator<T> implements
         };
     }
 
-    @Override
-    public Class<Synchronizing> getDecorationType() {
-        return Synchronizing.class;
-    }
-
-    @Override
-    public Synchronizing getDecoration() {
-        return Synchronizing.INSTANCE;
-    }
-
-    //TODO: Document dummy interface
+    //TODO: Document dummy enum
     enum Synchronizing {
         INSTANCE
+    }
+
+    public static <T> SynchronizingListenerDecorator<T> get() {
+        return new SynchronizingListenerDecorator<>();
     }
 }
