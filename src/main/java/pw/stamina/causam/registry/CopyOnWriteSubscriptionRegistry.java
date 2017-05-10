@@ -91,7 +91,7 @@ public final class CopyOnWriteSubscriptionRegistry
     }
 
     @Override
-    public <T> Collection<Subscription<T>> selectSubscriptions(Class<T> key) {
+    public <T> Iterable<Subscription<T>> selectSubscriptions(Class<T> key) {
         return selectorService.selectSubscriptions(key, () ->
                 Collections.unmodifiableSet(subscriptions));
     }
