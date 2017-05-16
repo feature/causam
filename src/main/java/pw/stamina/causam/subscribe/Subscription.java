@@ -22,6 +22,9 @@
 
 package pw.stamina.causam.subscribe;
 
+import pw.stamina.causam.Identifier;
+import pw.stamina.causam.publish.exception.PublicationException;
+
 import java.util.Map;
 
 /**
@@ -35,7 +38,9 @@ public interface Subscription<T> {
 
     Object getSubscriber();
 
-    void call(T event) throws Exception;
+    Identifier getIdentifier();
+
+    void call(T event) throws PublicationException;
 
     <R> R getDecoration(Class<R> decorationType);
 

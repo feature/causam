@@ -22,6 +22,7 @@
 
 package pw.stamina.causam.scan.method;
 
+import pw.stamina.causam.publish.exception.PublicationException;
 import pw.stamina.causam.subscribe.listen.Listener;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,9 +39,13 @@ final class MethodInvokingListener<T> implements Listener<T> {
     }
 
     @Override
-    public void publish(T event) throws
-            InvocationTargetException,
-            IllegalAccessException {
-        target.invoke(handle, event);
+    public void publish(T event) throws PublicationException {
+        try {
+            target.invoke(handle, event);
+        } catch (IllegalAccessException e) {
+            throw new PublicationException(e);
+        } catch (InvocationTargetException e) {
+            throw new PublicationException(e.getCause());
+        }
     }
 }

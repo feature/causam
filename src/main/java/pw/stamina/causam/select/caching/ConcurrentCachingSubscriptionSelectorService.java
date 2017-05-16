@@ -20,29 +20,29 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.select;
+package pw.stamina.causam.select.caching;
 
 import pw.stamina.causam.subscribe.Subscription;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-public final class CachingSubscriptionSelectorService
-        implements SubscriptionSelectorService {
+final class ConcurrentCachingSubscriptionSelectorService
+        extends AbstractCachingSubscriptionSelectorService {
     private final ConcurrentMap<Class<?>, List<Subscription<?>>>
             cachedFlattenedKeyBasedSelectionResult;
 
-    public CachingSubscriptionSelectorService() {
+    ConcurrentCachingSubscriptionSelectorService() {
         this.cachedFlattenedKeyBasedSelectionResult = new ConcurrentHashMap<>();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> Iterable<Subscription<T>> selectSubscriptions(
-            Class<T> key, Supplier<Set<Subscription<?>>> subscriptions) {
+            Class<T> key, Supplier<Stream<Subscription<?>>> subscriptions) {
 
 
 

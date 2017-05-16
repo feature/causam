@@ -22,6 +22,8 @@
 
 package pw.stamina.causam.subscribe.listen;
 
+import pw.stamina.causam.publish.exception.PublicationException;
+
 @FunctionalInterface
 public interface Listener<T> {
 
@@ -29,7 +31,7 @@ public interface Listener<T> {
      * Publishes the {@code event} to this listener.
      *
      * @param event event being published
-     * @throws Exception delegates
+     * @throws PublicationException
      */
-    void publish(T event) throws Exception;
+    void publish(T event) throws PublicationException;
 }

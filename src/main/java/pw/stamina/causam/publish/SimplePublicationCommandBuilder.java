@@ -20,18 +20,42 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.select;
+package pw.stamina.causam.publish;
 
-public final class EqualsSelector<T> implements Selector {
-    private final Class<T> key;
+import java.util.Objects;
 
-    public EqualsSelector(Class<T> key) {
-        this.key = key;
+final class SimplePublicationCommandBuilder<T, R> implements PublicationCommandBuilder<T, R> {
+    private final T event;
+    private R key;
+
+    private boolean compiled;
+
+    private SimplePublicationCommandBuilder(T event) {
+        this.event = event;
     }
 
+    @Override
+    public PublicationCommandBuilder<T, R> key(R key) {
+        Objects.requireNonNull(key, "key");
+        this.key = key;
+        return this;
+    }
 
     @Override
-    public boolean canSelect(Class<?> key) {
-        return this.key == key;
+    public PublicationCommand compile() {
+        return null;
+    }
+
+    @Override
+    public AsyncPublicationCommand compileAsync() {
+        return null;
+    }
+
+    private void checkCompiledStateAndMarkCompiled() {
+        if (compiled) {
+            throw new IllegalStateException("");//TODO Message
+        } else {
+            compiled = true;
+        }
     }
 }

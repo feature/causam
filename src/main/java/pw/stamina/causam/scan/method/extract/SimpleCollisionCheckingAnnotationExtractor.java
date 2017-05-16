@@ -29,13 +29,13 @@ import java.lang.reflect.Method;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class AbstractCollisionCheckingAnnotationExtractor<T extends Annotation>
+public class SimpleCollisionCheckingAnnotationExtractor<T extends Annotation>
         implements CollisionCheckingAnnotationExtractor<T> {
     private final Class<T> extractionTarget;
     private final Function<Subscriber, T> subscriberExtractor;
     private final Predicate<Subscriber> collisionChecker;
 
-    AbstractCollisionCheckingAnnotationExtractor(
+    SimpleCollisionCheckingAnnotationExtractor(
             Class<T> extractionTarget,
             Function<Subscriber, T> subscriberExtractor,
             Predicate<Subscriber> collisionChecker) {

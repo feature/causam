@@ -24,7 +24,7 @@ package pw.stamina.causam.subscribe.listen.decorate.pause;
 
 /**
  * Provides pausable behavior to an object. How the
- * behavior is affected by the pasued state, should
+ * behavior is affected by the paused state, should
  * be specified in the documentation of the implementing
  * class.
  */

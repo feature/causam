@@ -20,27 +20,22 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam;
+package pw.stamina.causam.select.caching;
 
-import pw.stamina.causam.publish.PublicationCommand;
-import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
-import pw.stamina.causam.registry.SubscriptionRegistrationFacade;
+import pw.stamina.causam.registry.SubscriptionRegistry;
+import pw.stamina.causam.select.SubscriptionSelectorService;
+import pw.stamina.causam.subscribe.Subscription;
 
-import java.util.concurrent.TimeUnit;
+public interface CachingSubscriptionSelectorService
+        extends SubscriptionSelectorService {
 
-public interface EventBus {
+    void notifySubscriptionAdded(Subscription<?> subscription);
 
-    String getIdentifier();
+    void notifySubscriptionRemoved(Subscription<?> subscription);
 
-    SubscriptionRegistrationFacade getRegistrationFacade();
+    SubscriptionRegistry decorateRegistry(SubscriptionRegistry registry);
 
-    PublicationExceptionHandler getExceptionHandler();
-
-    <T> void now(T event);
-
-    <T> void async(T event);
-
-    <T> void async(T event, long timeout, TimeUnit unit);
-
-    <T> PublicationCommand<T> publish(T event);
+    static CachingSubscriptionSelectorService concurrent() {
+        return new ConcurrentCachingSubscriptionSelectorService();
+    }
 }

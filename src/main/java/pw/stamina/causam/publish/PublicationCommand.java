@@ -22,7 +22,7 @@
 
 package pw.stamina.causam.publish;
 
-public interface PublicationCommand<T> {
+public interface PublicationCommand {
 
     void now();
 }

@@ -24,8 +24,6 @@ package pw.stamina.causam.subscribe.listen.decorate;
 
 import pw.stamina.causam.subscribe.listen.Listener;
 
-import java.util.function.UnaryOperator;
-
 /**
  *
  *

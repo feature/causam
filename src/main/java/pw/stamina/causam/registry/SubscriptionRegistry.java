@@ -38,5 +38,5 @@ public interface SubscriptionRegistry {
 
     Stream<Subscription<?>> findSubscriptions(Object subscriber);
 
-    <T> Iterable<Subscription<T>> selectSubscriptions(Class<T> key);
+    Stream<Subscription<?>> findAllSubscriptions();
 }

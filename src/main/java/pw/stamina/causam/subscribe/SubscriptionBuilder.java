@@ -22,6 +22,7 @@
 
 package pw.stamina.causam.subscribe;
 
+import pw.stamina.causam.Identifier;
 import pw.stamina.causam.subscribe.listen.Listener;
 import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator;
 
@@ -30,8 +31,13 @@ import java.util.Objects;
 
 public final class SubscriptionBuilder<T> {
     private Object subscriber;
+    private Identifier identifier;
     private Listener<T> listener;
     private Map<Class<?>, Object> decorations;
+
+    public SubscriptionBuilder() {
+        identifier = Identifier.empty();
+    }
 
     public SubscriptionBuilder<T> subscriber(Object subscriber) {
         Objects.requireNonNull(subscriber, "subscriber");
@@ -68,6 +74,7 @@ public final class SubscriptionBuilder<T> {
 
         return new ImmutableSubscription<>(
                 subscriber,
+                identifier,
                 listener,
                 decorations);
     }

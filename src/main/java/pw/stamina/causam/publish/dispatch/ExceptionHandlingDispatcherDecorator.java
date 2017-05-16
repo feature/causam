@@ -20,60 +20,29 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam;
+package pw.stamina.causam.publish.dispatch;
 
-import pw.stamina.causam.publish.PublicationCommand;
+import pw.stamina.causam.publish.exception.PublicationException;
 import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
-import pw.stamina.causam.registry.SubscriptionRegistrationFacade;
-import pw.stamina.causam.registry.SubscriptionRegistry;
+import pw.stamina.causam.subscribe.Subscription;
 
-import java.util.concurrent.TimeUnit;
-
-public final class ImmutableEventBus implements EventBus {
-    private final String identifier;
-    private final SubscriptionRegistry subscriptions;
+public final class ExceptionHandlingDispatcherDecorator implements Dispatcher {
+    private final Dispatcher delegate;
     private final PublicationExceptionHandler exceptionHandler;
 
-    ImmutableEventBus(String identifier,
-                      SubscriptionRegistry subscriptions,
-                      PublicationExceptionHandler exceptionHandler) {
-        this.identifier = identifier;
-        this.subscriptions = subscriptions;
+    private ExceptionHandlingDispatcherDecorator(
+            Dispatcher delegate,
+            PublicationExceptionHandler exceptionHandler) {
+        this.delegate = delegate;
         this.exceptionHandler = exceptionHandler;
     }
 
     @Override
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public PublicationExceptionHandler getExceptionHandler() {
-        return exceptionHandler;
-    }
-
-    @Override
-    public SubscriptionRegistrationFacade getRegistrationFacade() {
-        return null;
-    }
-
-    @Override
-    public <T> void now(T event) {
-
-    }
-
-    @Override
-    public <T> void async(T event) {
-
-    }
-
-    @Override
-    public <T> void async(T event, long timeout, TimeUnit unit) {
-
-    }
-
-    @Override
-    public <T> PublicationCommand<T> publish(T event) {
-        return null;
+    public <T> void dispatch(T event, Iterable<Subscription<T>> subscriptions) {
+        try {
+            delegate.dispatch(event, subscriptions);
+        } catch (PublicationException e) {
+            exceptionHandler.handleException(e, null);//TODO: Provide context
+        }
     }
 }

@@ -20,34 +20,27 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.bus;
 
 import pw.stamina.causam.Identifier;
-import pw.stamina.causam.publish.exception.PublicationException;
-import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.publish.PublicationCommandBuilder;
+import pw.stamina.causam.registry.SubscriptionRegistrationFacade;
+import pw.stamina.causam.registry.SubscriptionRegistry;
+import pw.stamina.causam.select.SubscriptionSelectorService;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-final class ImmutableSubscription<T> implements Subscription<T> {
-    private final Object subscriber;
+final class ImmutableEventBus implements EventBus {
     private final Identifier identifier;
-    private final Listener<T> listener;
-    private final Map<Class<?>, ?> decorations;
+    private final SubscriptionRegistry subscriptions;
+    private final SubscriptionSelectorService selector;
 
-    ImmutableSubscription(Object subscriber,
-                          Identifier identifier,
-                          Listener<T> listener,
-                          Map<Class<?>, ?> decorations) {
-        this.subscriber = subscriber;
+    ImmutableEventBus(Identifier identifier,
+                      SubscriptionRegistry subscriptions,
+                      SubscriptionSelectorService selector) {
         this.identifier = identifier;
-        this.listener = listener;
-        this.decorations = decorations;
-    }
-
-    @Override
-    public Object getSubscriber() {
-        return subscriber;
+        this.subscriptions = subscriptions;
+        this.selector = selector;
     }
 
     @Override
@@ -56,25 +49,27 @@ final class ImmutableSubscription<T> implements Subscription<T> {
     }
 
     @Override
-    public void call(T event) throws PublicationException {
-        listener.publish(event);
+    public SubscriptionRegistrationFacade getRegistrationFacade() {
+        return null;
     }
 
     @Override
-    public <R> R getDecoration(Class<R> decorationType) {
-        @SuppressWarnings("unchecked")
-        R decoration = (R) decorations.get(decorationType);
+    public <T> void now(T event) {
 
-        return decoration;
     }
 
     @Override
-    public <R> boolean hasDecoration(Class<R> decorationType) {
-        return decorations.containsKey(decorationType);
+    public <T> void async(T event) {
+
     }
 
     @Override
-    public Map<Class<?>, ?> getDecorations() {
-        return Collections.unmodifiableMap(decorations);
+    public <T> void async(T event, long timeout, TimeUnit unit) {
+
+    }
+
+    @Override
+    public <T, R> PublicationCommandBuilder<T, R> publish(T event) {
+        return null;
     }
 }

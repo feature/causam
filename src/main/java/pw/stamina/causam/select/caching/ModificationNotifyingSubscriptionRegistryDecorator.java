@@ -20,61 +20,52 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.registry;
+package pw.stamina.causam.select.caching;
 
+import pw.stamina.causam.registry.SubscriptionRegistry;
 import pw.stamina.causam.subscribe.Subscription;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public final class CopyOnWriteSubscriptionRegistry
+final class ModificationNotifyingSubscriptionRegistryDecorator
         implements SubscriptionRegistry {
+    private final SubscriptionRegistry registry;
 
-    private final Set<Subscription<?>> subscriptions;
-
-    public CopyOnWriteSubscriptionRegistry() {
-        subscriptions = new CopyOnWriteArraySet<>();
+    private ModificationNotifyingSubscriptionRegistryDecorator(SubscriptionRegistry registry) {
+        this.registry = registry;
     }
 
     @Override
     public boolean register(Subscription<?> subscription) {
-        return subscriptions.add(subscription);
+        return false;
     }
 
     @Override
-    public boolean registerAll(Collection<Subscription<?>> subscriptions) {
-        validateSubscriptionsInput(subscriptions);
-        return this.subscriptions.addAll(subscriptions);
-    }
-
-    private void validateSubscriptionsInput(
-            Collection<Subscription<?>> subscriptions) {
-        Objects.requireNonNull(subscriptions, "subscriptions");
-        subscriptions.forEach(subscription ->
-                Objects.requireNonNull(subscription, "subscription is null"));
+    public boolean registerAll(Collection<Subscription<?>> subscription) {
+        return false;
     }
 
     @Override
     public boolean unregisterIf(Predicate<Subscription<?>> filter) {
-        Objects.requireNonNull(filter, "filter");
-        return subscriptions.removeIf(filter);
+        return false;
     }
 
     @Override
     public Stream<Subscription<?>> findSubscriptions(Object subscriber) {
-        Objects.requireNonNull(subscriber, "subscriber");
-
-        return findAllSubscriptions()
-                .filter(subscription ->
-                        subscription.getSubscriber() == subscriber);
+        return registry.findSubscriptions(subscriber);
     }
 
     @Override
     public Stream<Subscription<?>> findAllSubscriptions() {
-        return subscriptions.stream();
+        return registry.findAllSubscriptions();
+    }
+
+    //FIXME: I am not very pretty :(
+    static ModificationNotifyingSubscriptionRegistryDecorator of(SubscriptionRegistry registry) {
+        Objects.requireNonNull(registry, "registry");
+        return new ModificationNotifyingSubscriptionRegistryDecorator(registry);
     }
 }

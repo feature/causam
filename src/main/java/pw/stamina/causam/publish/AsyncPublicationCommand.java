@@ -24,9 +24,9 @@ package pw.stamina.causam.publish;
 
 import java.util.concurrent.TimeUnit;
 
-public interface AsyncPublicationCommand {
+public interface AsyncPublicationCommand extends PublicationCommand {
 
-    void asynchronously();
+    void async();
 
-    void asynchronously(long timeout, TimeUnit unit);
+    void async(long timeout, TimeUnit unit);
 }

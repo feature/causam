@@ -20,9 +20,22 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.select;
+package pw.stamina.causam.select.caching;
 
-public interface Selector<T> {
+import pw.stamina.causam.registry.SubscriptionRegistry;
 
-    boolean canSelect(T key);
+public abstract class AbstractCachingSubscriptionSelectorService
+        implements CachingSubscriptionSelectorService {
+    private boolean decorated;
+
+    @Override
+    public final SubscriptionRegistry decorateRegistry(SubscriptionRegistry registry) {
+        if (decorated) {
+            throw new IllegalStateException();//TODO
+        } else {
+            decorated = true;
+        }
+
+        return ModificationNotifyingSubscriptionRegistryDecorator.of(registry);
+    }
 }

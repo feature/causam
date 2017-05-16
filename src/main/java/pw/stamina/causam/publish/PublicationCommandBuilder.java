@@ -20,9 +20,13 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.select;
+package pw.stamina.causam.publish;
 
-public interface Selector<T> {
+public interface PublicationCommandBuilder<T, R> {
 
-    boolean canSelect(T key);
+    PublicationCommandBuilder<T, R> key(R key);
+
+    PublicationCommand compile();
+
+    AsyncPublicationCommand compileAsync();
 }

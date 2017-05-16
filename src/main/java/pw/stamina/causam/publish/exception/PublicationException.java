@@ -20,9 +20,15 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.select;
+package pw.stamina.causam.publish.exception;
 
-public interface Selector<T> {
+public final class PublicationException extends RuntimeException {
 
-    boolean canSelect(T key);
+    public PublicationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public PublicationException(Throwable cause) {
+        super(cause);
+    }
 }

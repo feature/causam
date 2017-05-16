@@ -26,7 +26,7 @@ import pw.stamina.causam.scan.method.model.Pausable;
 import pw.stamina.causam.scan.method.model.Subscriber;
 
 public final class PausableAnnotationExtractor
-        extends AbstractCollisionCheckingAnnotationExtractor<Pausable> {
+        extends SimpleCollisionCheckingAnnotationExtractor<Pausable> {
 
     public PausableAnnotationExtractor() {
         super(Pausable.class,

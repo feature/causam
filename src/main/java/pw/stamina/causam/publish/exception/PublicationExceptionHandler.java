@@ -35,10 +35,10 @@ public interface PublicationExceptionHandler {
      * Handles an {@link Exception} thrown while publishing
      * an event.
      *
-     * @param exception exception throw during publication
+     * @param exception exception thrown during publication
      * @param context   context of the publication in which
      *                  the exception was thrown
      */
-    void handleException(Exception exception,
+    void handleException(PublicationException exception,
                          PublicationExceptionContext context);
 }

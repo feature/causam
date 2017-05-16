@@ -52,7 +52,6 @@ public final class MethodSubscriberScanningStrategy
     public ScanResult scan(Object subscriber)
             throws IllegalSubscriberMethodException {
         Objects.requireNonNull(subscriber, "subscriber input cannot be null");
-
         Method[] methods = subscriber.getClass().getDeclaredMethods();
 
         return Arrays.stream(methods)

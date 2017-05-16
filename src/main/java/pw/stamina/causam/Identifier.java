@@ -20,9 +20,43 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.select;
+package pw.stamina.causam;
 
-public interface Selector<T> {
+public final class Identifier {
+    private static final Identifier EMPTY = new Identifier("");
 
-    boolean canSelect(T key);
+    private final String identifier;
+
+    private Identifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public static Identifier of(String identifier) {
+        //TODO: Validate
+        return new Identifier(identifier);
+    }
+
+    public static Identifier empty() {
+        return EMPTY;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Identifier that = (Identifier) o;
+
+        return identifier.equals(that.identifier);
+    }
+
+    @Override
+    public int hashCode() {
+        return identifier.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return identifier;
+    }
 }

@@ -20,9 +20,11 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.select;
+package pw.stamina.causam.publish.dispatch;
 
-public interface Selector<T> {
+import pw.stamina.causam.subscribe.Subscription;
 
-    boolean canSelect(T key);
+public interface Dispatcher {
+
+    <T> void dispatch(T event, Iterable<Subscription<T>> subscriptions);
 }

@@ -24,15 +24,11 @@ package pw.stamina.causam.select;
 
 import pw.stamina.causam.subscribe.Subscription;
 
-import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public interface SubscriptionSelectorService {
 
     <T> Iterable<Subscription<T>> selectSubscriptions(
-            Class<T> key, Supplier<Set<Subscription<?>>> subscriptions);
-
-    void notifySubscriptionAdded(Subscription<?> subscription);
-
-    void notifySubscriptionRemoved(Subscription<?> subscription);
+            Class<T> key, Supplier<Stream<Subscription<?>>> subscriptions);
 }

@@ -22,15 +22,16 @@
 
 package pw.stamina.causam.publish.exception;
 
+import pw.stamina.causam.Identifier;
 import pw.stamina.causam.subscribe.Subscription;
 
 public final class PublicationExceptionContext {
     private final Subscription<?> subscription;
-    private final String busIdentifier;
+    private final Identifier busIdentifier;
     private final Object event;
 
     public PublicationExceptionContext(Subscription<?> subscription,
-                                       String busIdentifier,
+                                       Identifier busIdentifier,
                                        Object event) {
         this.subscription = subscription;
         this.busIdentifier = busIdentifier;
@@ -41,7 +42,7 @@ public final class PublicationExceptionContext {
         return subscription;
     }
 
-    public String getBusIdentifier() {
+    public Identifier getBusIdentifier() {
         return busIdentifier;
     }
 
