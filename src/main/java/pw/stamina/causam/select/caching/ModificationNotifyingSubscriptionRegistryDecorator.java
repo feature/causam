@@ -33,25 +33,46 @@ import java.util.stream.Stream;
 final class ModificationNotifyingSubscriptionRegistryDecorator
         implements SubscriptionRegistry {
     private final SubscriptionRegistry registry;
+    private final CachingSubscriptionSelectorService selectorService;
 
-    private ModificationNotifyingSubscriptionRegistryDecorator(SubscriptionRegistry registry) {
+    private ModificationNotifyingSubscriptionRegistryDecorator(
+            SubscriptionRegistry registry,
+            CachingSubscriptionSelectorService selectorService) {
         this.registry = registry;
+        this.selectorService = selectorService;
     }
 
-    //FIXME: Implement
     @Override
     public boolean register(Subscription<?> subscription) {
-        return registry.register(subscription);
+        boolean registered = registry.register(subscription);
+
+        if (registered) {
+            selectorService.notifySubscriptionAdded(subscription);
+        }
+
+        return registered;
     }
 
     @Override
     public boolean registerAll(Collection<Subscription<?>> subscriptions) {
-        return registry.registerAll(subscriptions);
+        boolean registered = registry.registerAll(subscriptions);
+
+        if (registered) {
+            subscriptions.forEach(selectorService::notifySubscriptionAdded);
+        }
+
+        return registered;
     }
 
     @Override
     public boolean unregisterIf(Predicate<Subscription<?>> filter) {
-        return registry.unregisterIf(filter);
+        boolean unregistered = registry.unregisterIf(filter);
+
+        if (unregistered) {
+            selectorService.notifySubscriptionsRemovedIf(filter);
+        }
+
+        return unregistered;
     }
 
     @Override
@@ -64,9 +85,11 @@ final class ModificationNotifyingSubscriptionRegistryDecorator
         return registry.findAllSubscriptions();
     }
 
-    //FIXME: I am not very pretty :(
-    static ModificationNotifyingSubscriptionRegistryDecorator of(SubscriptionRegistry registry) {
+    static ModificationNotifyingSubscriptionRegistryDecorator of(
+            SubscriptionRegistry registry,
+            CachingSubscriptionSelectorService selectorService) {
         Objects.requireNonNull(registry, "registry");
-        return new ModificationNotifyingSubscriptionRegistryDecorator(registry);
+        Objects.requireNonNull(selectorService, "selectorService");
+        return new ModificationNotifyingSubscriptionRegistryDecorator(registry, selectorService);
     }
 }

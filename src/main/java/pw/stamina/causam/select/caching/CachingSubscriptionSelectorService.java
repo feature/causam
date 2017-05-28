@@ -26,12 +26,14 @@ import pw.stamina.causam.registry.SubscriptionRegistry;
 import pw.stamina.causam.select.SubscriptionSelectorService;
 import pw.stamina.causam.subscribe.Subscription;
 
+import java.util.function.Predicate;
+
 public interface CachingSubscriptionSelectorService
         extends SubscriptionSelectorService {
 
     void notifySubscriptionAdded(Subscription<?> subscription);
 
-    void notifySubscriptionRemoved(Subscription<?> subscription);
+    void notifySubscriptionsRemovedIf(Predicate<Subscription<?>> filter);
 
     SubscriptionRegistry decorateRegistry(SubscriptionRegistry registry);
 

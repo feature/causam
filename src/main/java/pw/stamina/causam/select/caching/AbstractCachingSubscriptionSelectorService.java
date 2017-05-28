@@ -37,6 +37,6 @@ public abstract class AbstractCachingSubscriptionSelectorService
             decorated = true;
         }
 
-        return ModificationNotifyingSubscriptionRegistryDecorator.of(registry);
+        return ModificationNotifyingSubscriptionRegistryDecorator.of(registry, this);
     }
 }

@@ -24,6 +24,7 @@ package pw.stamina.causam.select.caching;
 
 import pw.stamina.causam.subscribe.Subscription;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,8 +81,14 @@ final class ConcurrentCachingSubscriptionSelectorService
     }
 
     @Override
-    public void notifySubscriptionRemoved(Subscription<?> subscription) {
-        removeCachedEntries(subscription);
+    public void notifySubscriptionsRemovedIf(Predicate<Subscription<?>> filter) {
+        cachedFlattenedClassToSubscriptionsHierarchy.values()
+                .removeIf(doesAnySubscriptionMatchFilter(filter));
+    }
+
+    private Predicate<Collection<Subscription<?>>> doesAnySubscriptionMatchFilter(
+            Predicate<Subscription<?>> filter) {
+        return subscriptions -> subscriptions.stream().anyMatch(filter);
     }
 
     private void removeCachedEntries(Subscription<?> subscription) {
