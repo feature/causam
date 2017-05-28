@@ -24,38 +24,68 @@ package pw.stamina.causam.select.caching;
 
 import pw.stamina.causam.subscribe.Subscription;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 final class ConcurrentCachingSubscriptionSelectorService
         extends AbstractCachingSubscriptionSelectorService {
     private final ConcurrentMap<Class<?>, List<Subscription<?>>>
-            cachedFlattenedKeyBasedSelectionResult;
+            cachedFlattenedClassToSubscriptionsHierarchy;
 
     ConcurrentCachingSubscriptionSelectorService() {
-        this.cachedFlattenedKeyBasedSelectionResult = new ConcurrentHashMap<>();
+        this.cachedFlattenedClassToSubscriptionsHierarchy = new ConcurrentHashMap<>();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Iterable<Subscription<T>> selectSubscriptions(
+    public <T> List<Subscription<T>> selectSubscriptions(
             Class<T> key, Supplier<Stream<Subscription<?>>> subscriptions) {
 
+        List<?> selected = cachedFlattenedClassToSubscriptionsHierarchy
+                .computeIfAbsent(key, k -> selectSubscriptions(subscriptions.get(), k));
 
+        return (List<Subscription<T>>) selected;
+    }
 
-        return null;
+    private List<Subscription<?>> selectSubscriptions(
+            Stream<Subscription<?>> subscriptions,
+            Class<?> key) {
+
+        List<Subscription<?>> selectedSubscriptions = subscriptions
+                        .filter(canSubscriberSelect(key))
+                        .collect(Collectors.toList());
+
+        return wrapSelectedSubscriptions(selectedSubscriptions);
+    }
+
+    private List<Subscription<?>> wrapSelectedSubscriptions(
+            List<Subscription<?>> selectedSubscriptions) {
+        return selectedSubscriptions.isEmpty()
+                ? Collections.emptyList()
+                : Collections.unmodifiableList(selectedSubscriptions);
+    }
+
+    private Predicate<Subscription<?>> canSubscriberSelect(Class<?> key) {
+        return subscription -> subscription.getSelector().canSelect(key);
     }
 
     @Override
     public void notifySubscriptionAdded(Subscription<?> subscription) {
-
+        removeCachedEntries(subscription);
     }
 
     @Override
     public void notifySubscriptionRemoved(Subscription<?> subscription) {
+        removeCachedEntries(subscription);
+    }
 
+    private void removeCachedEntries(Subscription<?> subscription) {
+        cachedFlattenedClassToSubscriptionsHierarchy.keySet()
+                .removeIf(subscription.getSelector()::canSelect);
     }
 }

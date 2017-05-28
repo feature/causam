@@ -31,13 +31,24 @@ public final class Identifier {
         this.identifier = identifier;
     }
 
-    public static Identifier of(String identifier) {
-        //TODO: Validate
+    public static Identifier empty() {
+        return EMPTY;
+    }
+
+    public static Identifier of(String identifier)
+            throws IllegalArgumentException {
+        validateIdentifierValue(identifier);
         return new Identifier(identifier);
     }
 
-    public static Identifier empty() {
-        return EMPTY;
+    private static void validateIdentifierValue(String value)
+            throws IllegalArgumentException {
+        if (value == null) {
+            throw new IllegalArgumentException("Identifier value cannot be null");
+        } else if (value.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Identifier value is empty. Use Identifier.empty() instead");
+        }
     }
 
     @Override

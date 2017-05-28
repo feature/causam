@@ -22,14 +22,13 @@
 
 package pw.stamina.causam.scan.method.model;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import static pw.stamina.causam.scan.method.model.Pausable.PausableType.NONE;
-
-@Target(ElementType.TYPE)
+@Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Configuration {
 
-    Pausable pausable() default @Pausable(NONE);
-    boolean synchronize() default false;
 }

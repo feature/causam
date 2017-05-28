@@ -23,45 +23,40 @@
 package pw.stamina.causam.bus;
 
 import pw.stamina.causam.Identifier;
-import pw.stamina.causam.publish.PublicationCommandBuilder;
+import pw.stamina.causam.publish.dispatch.Dispatcher;
 import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
 import pw.stamina.causam.registry.SubscriptionRegistrationFacade;
 import pw.stamina.causam.registry.SubscriptionRegistry;
 import pw.stamina.causam.select.SubscriptionSelectorService;
-import pw.stamina.causam.select.caching.CachingSubscriptionSelectorService;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 public interface EventBus {
 
     Identifier getIdentifier();
 
+    SubscriptionRegistry getRegistry();
+
     SubscriptionRegistrationFacade getRegistrationFacade();
 
-    <T> void now(T event);
-
-    <T> void async(T event);
-
-    <T> void async(T event, long timeout, TimeUnit unit);
-
-    <T, R> PublicationCommandBuilder<T, R> publish(T event);
+    <T> void post(T event);
 
     interface Builder {
 
-        Builder identifier(String identifier);
+        Builder registry(Supplier<SubscriptionRegistry> registry);
 
-        Builder registry(SubscriptionRegistry registry);
+        Builder exceptionHandler(Supplier<PublicationExceptionHandler> exceptionHandler);
 
-        Builder exceptionHandler(PublicationExceptionHandler exceptionHandler);
+        Builder selector(Supplier<SubscriptionSelectorService> selector);
 
-        Builder selector(SubscriptionSelectorService selector);
-
-        Builder cachingSelector(CachingSubscriptionSelectorService selector);
+        Builder dispatcher(Supplier<Dispatcher> dispatcher);
 
         EventBus build();
     }
 
-    static Builder builder() {
-        return new FinalizingEventBusBuilder();
+    static Builder builder(Identifier identifier) {
+        Objects.requireNonNull(identifier, "identifier");
+        return new LazyEventBusBuilder(identifier);
     }
 }

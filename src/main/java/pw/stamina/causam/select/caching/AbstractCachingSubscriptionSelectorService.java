@@ -31,7 +31,8 @@ public abstract class AbstractCachingSubscriptionSelectorService
     @Override
     public final SubscriptionRegistry decorateRegistry(SubscriptionRegistry registry) {
         if (decorated) {
-            throw new IllegalStateException();//TODO
+            throw new AssertionError(
+                    "This caching selector service has already decorated a registry");
         } else {
             decorated = true;
         }

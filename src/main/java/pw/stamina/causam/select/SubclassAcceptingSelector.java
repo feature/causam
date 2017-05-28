@@ -20,28 +20,17 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.select;
 
-import java.lang.reflect.Method;
+final class SubclassAcceptingSelector implements Selector {
+    private final Class<?> superClass;
 
-enum StandardSubscriberMethodValidator
-        implements SubscriberMethodValidator {
-    INSTANCE;
-
-    @Override
-    public void validate(Method method) throws IllegalSubscriberMethodException {
-        if (!methodHasOneParameter(method)) {
-            throw new IllegalSubscriberMethodException(method,
-                    "An annotated subscriber method may only have exactly " +
-                            "1 parameter. Method: " + method.getName() + " in " +
-                            "class: " + method.getDeclaringClass());
-        }
-
-        //TODO: Check other method conditions?
-        //TODO: Disallow synchronized methods, use annotation instead
+    SubclassAcceptingSelector(Class<?> superClass) {
+        this.superClass = superClass;
     }
 
-    private static boolean methodHasOneParameter(Method method) {
-        return method.getParameterCount() == 1;
+    @Override
+    public boolean canSelect(Class<?> key) {
+        return superClass.isAssignableFrom(key);
     }
 }

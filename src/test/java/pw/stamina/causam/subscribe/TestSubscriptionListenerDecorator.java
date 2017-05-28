@@ -20,9 +20,30 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.publish;
+package pw.stamina.causam.subscribe;
 
-public interface PublicationCommand {
+import org.junit.Ignore;
+import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator;
 
-    void now();
+@Ignore
+final class TestSubscriptionListenerDecorator
+        implements SubscriptionListenerDecorator<Object, Object> {
+
+    private final Object object = new Object();
+
+    @Override
+    public Listener<Object> decorate(Listener<Object> decorating) {
+        return decorating;
+    }
+
+    @Override
+    public Class<Object> getDecorationType() {
+        return Object.class;
+    }
+
+    @Override
+    public Object getDecoration() {
+        return object;
+    }
 }

@@ -24,8 +24,10 @@ package pw.stamina.causam.subscribe;
 
 import pw.stamina.causam.Identifier;
 import pw.stamina.causam.publish.exception.PublicationException;
+import pw.stamina.causam.select.Selector;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Defines an event subscription, its properties
@@ -38,7 +40,9 @@ public interface Subscription<T> {
 
     Object getSubscriber();
 
-    Identifier getIdentifier();
+    Optional<Identifier> getIdentifier();
+
+    Selector getSelector();
 
     void call(T event) throws PublicationException;
 

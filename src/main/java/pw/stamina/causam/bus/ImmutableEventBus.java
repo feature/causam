@@ -23,23 +23,27 @@
 package pw.stamina.causam.bus;
 
 import pw.stamina.causam.Identifier;
-import pw.stamina.causam.publish.PublicationCommandBuilder;
+import pw.stamina.causam.publish.dispatch.Dispatcher;
 import pw.stamina.causam.registry.SubscriptionRegistrationFacade;
 import pw.stamina.causam.registry.SubscriptionRegistry;
 import pw.stamina.causam.select.SubscriptionSelectorService;
+import pw.stamina.causam.subscribe.Subscription;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Collection;
 
 final class ImmutableEventBus implements EventBus {
     private final Identifier identifier;
-    private final SubscriptionRegistry subscriptions;
+    private final SubscriptionRegistry registry;
     private final SubscriptionSelectorService selector;
+    private final Dispatcher dispatcher;
 
     ImmutableEventBus(Identifier identifier,
-                      SubscriptionRegistry subscriptions,
-                      SubscriptionSelectorService selector) {
+                      SubscriptionRegistry registry,
+                      SubscriptionSelectorService selector,
+                      Dispatcher dispatcher) {
         this.identifier = identifier;
-        this.subscriptions = subscriptions;
+        this.registry = registry;
+        this.dispatcher = dispatcher;
         this.selector = selector;
     }
 
@@ -49,27 +53,27 @@ final class ImmutableEventBus implements EventBus {
     }
 
     @Override
+    public SubscriptionRegistry getRegistry() {
+        return registry;
+    }
+
+    @Override
     public SubscriptionRegistrationFacade getRegistrationFacade() {
-        return null;
+        return SubscriptionRegistrationFacade.simple(registry);
     }
 
     @Override
-    public <T> void now(T event) {
+    public <T> void post(T event) {
+        @SuppressWarnings("unchecked")
+        Class<T> key = (Class<T>) event.getClass();
 
-    }
+        Collection<Subscription<T>> subscriptions = selector
+                .selectSubscriptions(key, this.registry::findAllSubscriptions);
 
-    @Override
-    public <T> void async(T event) {
+        if (subscriptions.isEmpty()) {
+            return;
+        }
 
-    }
-
-    @Override
-    public <T> void async(T event, long timeout, TimeUnit unit) {
-
-    }
-
-    @Override
-    public <T, R> PublicationCommandBuilder<T, R> publish(T event) {
-        return null;
+        dispatcher.dispatch(event, subscriptions);
     }
 }

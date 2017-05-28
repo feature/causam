@@ -38,19 +38,20 @@ final class ModificationNotifyingSubscriptionRegistryDecorator
         this.registry = registry;
     }
 
+    //FIXME: Implement
     @Override
     public boolean register(Subscription<?> subscription) {
-        return false;
+        return registry.register(subscription);
     }
 
     @Override
-    public boolean registerAll(Collection<Subscription<?>> subscription) {
-        return false;
+    public boolean registerAll(Collection<Subscription<?>> subscriptions) {
+        return registry.registerAll(subscriptions);
     }
 
     @Override
     public boolean unregisterIf(Predicate<Subscription<?>> filter) {
-        return false;
+        return registry.unregisterIf(filter);
     }
 
     @Override

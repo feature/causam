@@ -24,23 +24,28 @@ package pw.stamina.causam.subscribe;
 
 import pw.stamina.causam.Identifier;
 import pw.stamina.causam.publish.exception.PublicationException;
+import pw.stamina.causam.select.Selector;
 import pw.stamina.causam.subscribe.listen.Listener;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 final class ImmutableSubscription<T> implements Subscription<T> {
     private final Object subscriber;
     private final Identifier identifier;
+    private final Selector selector;
     private final Listener<T> listener;
     private final Map<Class<?>, ?> decorations;
 
     ImmutableSubscription(Object subscriber,
                           Identifier identifier,
+                          Selector selector,
                           Listener<T> listener,
                           Map<Class<?>, ?> decorations) {
         this.subscriber = subscriber;
         this.identifier = identifier;
+        this.selector = selector;
         this.listener = listener;
         this.decorations = decorations;
     }
@@ -51,8 +56,13 @@ final class ImmutableSubscription<T> implements Subscription<T> {
     }
 
     @Override
-    public Identifier getIdentifier() {
-        return identifier;
+    public Optional<Identifier> getIdentifier() {
+        return Optional.of(identifier);
+    }
+
+    @Override
+    public Selector getSelector() {
+        return selector;
     }
 
     @Override

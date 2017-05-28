@@ -22,7 +22,19 @@
 
 package pw.stamina.causam.select;
 
-public interface Selector<T> {
+import java.util.Objects;
 
-    boolean canSelect(T key);
+public interface Selector {
+
+    boolean canSelect(Class<?> key);
+
+    static Selector exact(Class<?> expectedKey) {
+        Objects.requireNonNull(expectedKey, "expectedKey");
+        return new ExactMatchingSelector(expectedKey);
+    }
+
+    static SubclassAcceptingSelector acceptsSubclasses(Class<?> superClass) {
+        Objects.requireNonNull(superClass, "superClass");
+        return new SubclassAcceptingSelector(superClass);
+    }
 }

@@ -20,34 +20,9 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.select;
+package pw.stamina.causam.scan.method.config;
 
-import java.util.function.Predicate;
+public final class MethodInvokingListenerConfiguration {
 
-public final class ClassSelector implements Selector<Class<?>> {
-    private final Predicate<Class<?>> selector;
 
-    private ClassSelector(Predicate<Class<?>> selector) {
-        this.selector = selector;
-    }
-
-    @Override
-    public boolean canSelect(Class<?> key) {
-        return selector.test(key);
-    }
-
-    public static ClassSelector newInstance(Class<?> key,
-                                            boolean acceptsSubclasses) {
-        return acceptsSubclasses
-                ? newSubclassAcceptingClassSelector(key)
-                : newExactMatchingClassSelector(key);
-    }
-
-    private static ClassSelector newSubclassAcceptingClassSelector(Class<?> key) {
-        return new ClassSelector(key::isAssignableFrom);
-    }
-
-    private static ClassSelector newExactMatchingClassSelector(Class<?> expectedKey) {
-        return new ClassSelector(key -> key == expectedKey);
-    }
 }

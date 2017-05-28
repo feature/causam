@@ -41,4 +41,8 @@ public interface PublicationExceptionHandler {
      */
     void handleException(PublicationException exception,
                          PublicationExceptionContext context);
+
+    static PublicationExceptionHandler stackTracePrinting() {
+        return StackTracePrintingPublicationExceptionHandler.INSTANCE;
+    }
 }

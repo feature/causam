@@ -20,13 +20,13 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.publish;
+package pw.stamina.causam.scan.method.model;
 
-public interface PublicationCommandBuilder<T, R> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    PublicationCommandBuilder<T, R> key(R key);
-
-    PublicationCommand compile();
-
-    AsyncPublicationCommand compileAsync();
-}
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AcceptSubclasses {}

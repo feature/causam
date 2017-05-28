@@ -37,7 +37,7 @@ public @interface Pausable {
     PausableType value() default PausableType.SIMPLE;
 
     enum PausableType {
-        NONE(null),
+        NONE(() -> null),
         SIMPLE(PausableSubscriptionListenerDecorator::simple),
         ATOMIC(PausableSubscriptionListenerDecorator::atomic);
 

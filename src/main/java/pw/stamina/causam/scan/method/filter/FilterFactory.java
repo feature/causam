@@ -20,28 +20,16 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.scan.method;
+package pw.stamina.causam.scan.method.filter;
 
 import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
-enum StandardSubscriberMethodValidator
-        implements SubscriberMethodValidator {
-    INSTANCE;
+public interface FilterFactory<T> {
 
-    @Override
-    public void validate(Method method) throws IllegalSubscriberMethodException {
-        if (!methodHasOneParameter(method)) {
-            throw new IllegalSubscriberMethodException(method,
-                    "An annotated subscriber method may only have exactly " +
-                            "1 parameter. Method: " + method.getName() + " in " +
-                            "class: " + method.getDeclaringClass());
-        }
+    Predicate<T> createFilter(Method method);
 
-        //TODO: Check other method conditions?
-        //TODO: Disallow synchronized methods, use annotation instead
-    }
+    boolean accepts(Method method);
 
-    private static boolean methodHasOneParameter(Method method) {
-        return method.getParameterCount() == 1;
-    }
+    Class<T> getSupportedEventType();
 }

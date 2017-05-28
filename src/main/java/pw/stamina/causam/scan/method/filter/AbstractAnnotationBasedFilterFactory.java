@@ -20,13 +20,34 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.publish;
+package pw.stamina.causam.scan.method.filter;
 
-import java.util.concurrent.TimeUnit;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
-public interface AsyncPublicationCommand extends PublicationCommand {
+public abstract class AbstractAnnotationBasedFilterFactory
+        <T, R extends Annotation> extends AbstractFilterFactory<T> {
 
-    void async();
+    private final Class<R> requiredAnnotation;
 
-    void async(long timeout, TimeUnit unit);
+    public AbstractAnnotationBasedFilterFactory(Class<T> supportedEventType,
+                                                Class<R> requiredAnnotation) {
+        super(supportedEventType);
+        this.requiredAnnotation = requiredAnnotation;
+    }
+
+    @Override
+
+    public Predicate<T> createFilter(Method method) {
+        R annotation = method.getAnnotation(requiredAnnotation);
+        return createFilter(annotation);
+    }
+
+    protected abstract Predicate<T> createFilter(R annotation);
+
+    @Override
+    public boolean accepts(Method method) {
+        return method.isAnnotationPresent(requiredAnnotation);
+    }
 }

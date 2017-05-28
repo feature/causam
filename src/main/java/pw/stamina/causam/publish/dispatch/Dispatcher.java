@@ -27,4 +27,8 @@ import pw.stamina.causam.subscribe.Subscription;
 public interface Dispatcher {
 
     <T> void dispatch(T event, Iterable<Subscription<T>> subscriptions);
+
+    static Dispatcher immediate() {
+        return ImmediateDispatcher.INSTANCE;
+    }
 }

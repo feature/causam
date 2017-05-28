@@ -22,37 +22,45 @@
 
 package pw.stamina.causam.publish.dispatch;
 
-import pw.stamina.causam.publish.exception.PublicationException;
-import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
 import pw.stamina.causam.subscribe.Subscription;
 
-import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public final class ExceptionHandlingDispatcherDecorator implements Dispatcher {
-    private final Dispatcher delegate;
-    private final PublicationExceptionHandler exceptionHandler;
+public final class AsyncQueuingDispatcher implements Dispatcher {
+    private final Queue<SubscriptionWithEventContainer<?>> queued;
 
-    private ExceptionHandlingDispatcherDecorator(
-            Dispatcher delegate,
-            PublicationExceptionHandler exceptionHandler) {
-        this.delegate = delegate;
-        this.exceptionHandler = exceptionHandler;
+    public AsyncQueuingDispatcher() {
+        queued = new ConcurrentLinkedQueue<>();
     }
 
     @Override
     public <T> void dispatch(T event, Iterable<Subscription<T>> subscriptions) {
-        try {
-            delegate.dispatch(event, subscriptions);
-        } catch (PublicationException e) {
-            exceptionHandler.handleException(e, null);//TODO: Provide context
+        subscriptions.forEach(subscription ->
+                queued.offer(new SubscriptionWithEventContainer<>(subscription, event)));
+
+        SubscriptionWithEventContainer<?> e;
+        while ((e = queued.poll()) != null) {
+            e.call();
         }
     }
 
-    public static Dispatcher of(Dispatcher delegate,
-                                PublicationExceptionHandler exceptionHandler) {
-        Objects.requireNonNull(delegate, "delegate");
-        Objects.requireNonNull(exceptionHandler, "exceptionHandler");
+    public void shutdown() {
 
-        return new ExceptionHandlingDispatcherDecorator(delegate, exceptionHandler);
+    }
+
+    private static final class SubscriptionWithEventContainer<T> {
+        private final Subscription<T> subscription;
+        private final T event;
+
+        public SubscriptionWithEventContainer(Subscription<T> subscription,
+                                              T event) {
+            this.subscription = subscription;
+            this.event = event;
+        }
+
+        void call() {
+            subscription.call(event);
+        }
     }
 }

@@ -22,60 +22,65 @@
 
 package pw.stamina.causam.registry;
 
+import pw.stamina.causam.scan.SubscriberScanningStrategy;
+import pw.stamina.causam.scan.result.ScanResult;
 import pw.stamina.causam.subscribe.Subscription;
 
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
-final class CopyOnWriteSubscriptionRegistry
-        implements SubscriptionRegistry {
+final class SimpleSubscriptionRegistrationFacade
+        implements SubscriptionRegistrationFacade {
 
-    private final Set<Subscription<?>> subscriptions;
+    private final SubscriptionRegistry registry;
 
-    CopyOnWriteSubscriptionRegistry() {
-        subscriptions = new CopyOnWriteArraySet<>();
+    SimpleSubscriptionRegistrationFacade(SubscriptionRegistry registry) {
+        this.registry = registry;
     }
 
     @Override
     public boolean register(Subscription<?> subscription) {
-        Objects.requireNonNull(subscription, "subscription");
-        return subscriptions.add(subscription);
+        return registry.register(subscription);
     }
 
     @Override
     public boolean registerAll(Collection<Subscription<?>> subscriptions) {
-        validateSubscriptionsInput(subscriptions);
-        return this.subscriptions.addAll(subscriptions);
-    }
-
-    private void validateSubscriptionsInput(
-            Collection<Subscription<?>> subscriptions) {
-        Objects.requireNonNull(subscriptions, "subscriptions");
-        subscriptions.forEach(subscription ->
-                Objects.requireNonNull(subscription, "subscription is null"));
+        return registry.registerAll(subscriptions);
     }
 
     @Override
-    public boolean unregisterIf(Predicate<Subscription<?>> filter) {
-        Objects.requireNonNull(filter, "filter");
-        return subscriptions.removeIf(filter);
-    }
-
-    @Override
-    public Stream<Subscription<?>> findSubscriptions(Object subscriber) {
+    public boolean registerWith(Object subscriber, SubscriberScanningStrategy strategy) {
         Objects.requireNonNull(subscriber, "subscriber");
+        Objects.requireNonNull(strategy, "strategy");
 
-        return findAllSubscriptions()
-                .filter(subscription ->
-                        subscription.getSubscriber() == subscriber);
+        ScanResult scan = strategy.scan(subscriber);
+        Set<Subscription<?>> subscriptions = scan.getSubscriptions();
+
+        return registry.registerAll(subscriptions);
     }
 
     @Override
-    public Stream<Subscription<?>> findAllSubscriptions() {
-        return subscriptions.stream();
+    public boolean unregister(Subscription<?> subscription) {
+        return registry.unregisterIf(Predicate.isEqual(subscription));
+    }
+
+    @Override
+    public boolean unregisterFor(Object subscriber) {
+        Objects.requireNonNull(subscriber, "subscriber");
+        return registry.unregisterIf(doesSubscriberMatch(subscriber));
+    }
+
+    @Override
+    public boolean unregisterForIf(Object subscriber, Predicate<Subscription<?>> filter) {
+        Objects.requireNonNull(subscriber, "subscriber");
+        Objects.requireNonNull(filter, "filter");
+
+        return registry.unregisterIf(doesSubscriberMatch(subscriber).and(filter));
+    }
+
+    private static Predicate<Subscription<?>> doesSubscriberMatch(Object subscriber) {
+        return subscription -> subscription.getSubscriber().equals(subscriber);
     }
 }

@@ -32,11 +32,15 @@ public interface SubscriptionRegistry {
 
     boolean register(Subscription<?> subscription);
 
-    boolean registerAll(Collection<Subscription<?>> subscription);
+    boolean registerAll(Collection<Subscription<?>> subscriptions);
 
     boolean unregisterIf(Predicate<Subscription<?>> filter);
 
     Stream<Subscription<?>> findSubscriptions(Object subscriber);
 
     Stream<Subscription<?>> findAllSubscriptions();
+
+    static SubscriptionRegistry copyOnWrite() {
+        return new CopyOnWriteSubscriptionRegistry();
+    }
 }

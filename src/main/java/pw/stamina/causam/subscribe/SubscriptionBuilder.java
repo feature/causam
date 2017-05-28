@@ -23,9 +23,11 @@
 package pw.stamina.causam.subscribe;
 
 import pw.stamina.causam.Identifier;
+import pw.stamina.causam.select.Selector;
 import pw.stamina.causam.subscribe.listen.Listener;
 import pw.stamina.causam.subscribe.listen.decorate.SubscriptionListenerDecorator;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,14 +36,28 @@ public final class SubscriptionBuilder<T> {
     private Identifier identifier;
     private Listener<T> listener;
     private Map<Class<?>, Object> decorations;
+    private Selector selector;
 
     public SubscriptionBuilder() {
         identifier = Identifier.empty();
+        decorations = new HashMap<>();
     }
 
     public SubscriptionBuilder<T> subscriber(Object subscriber) {
         Objects.requireNonNull(subscriber, "subscriber");
         this.subscriber = subscriber;
+        return this;
+    }
+
+    public SubscriptionBuilder<T> identifier(Identifier identifier) {
+        Objects.requireNonNull(identifier, "identifier");
+        this.identifier = identifier;
+        return this;
+    }
+
+    public SubscriptionBuilder<T> selector(Selector selector) {
+        Objects.requireNonNull(selector, "selector");
+        this.selector = selector;
         return this;
     }
 
@@ -51,8 +67,9 @@ public final class SubscriptionBuilder<T> {
         return this;
     }
 
-    public <R> SubscriptionBuilder<T> decorate(
+    public <R> SubscriptionBuilder<T> decorateListener(
             SubscriptionListenerDecorator<T, R> decorator) {
+        //TODO: Verify listener has been set
         Class<R> decorationType = decorator.getDecorationType();
         R decoration = decorator.getDecoration();
 
@@ -70,12 +87,26 @@ public final class SubscriptionBuilder<T> {
     }
 
     public Subscription<T> build() {
-        //TODO: Validate state
+        validateBuilderIsComplete();
 
         return new ImmutableSubscription<>(
                 subscriber,
                 identifier,
+                selector,
                 listener,
                 decorations);
+    }
+
+    private void validateBuilderIsComplete() {
+        if (subscriber == null) {
+            throw new IllegalStateException("subscriber has not been set, " +
+                    "please set it using the #subscriber method.");
+        } else if (selector == null) {
+            throw new IllegalStateException("selector has not been set, " +
+                    "please set it using the #selector method.");
+        } else if (listener == null) {
+            throw new IllegalStateException("listener has not been set, " +
+                    "please set it using the #listener method.");
+        }
     }
 }

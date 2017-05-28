@@ -20,42 +20,16 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.publish;
+package pw.stamina.causam.scan.method.filter;
 
-import java.util.Objects;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-final class SimplePublicationCommandBuilder<T, R> implements PublicationCommandBuilder<T, R> {
-    private final T event;
-    private R key;
+@Target(ElementType.ANNOTATION_TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Filter {
 
-    private boolean compiled;
-
-    private SimplePublicationCommandBuilder(T event) {
-        this.event = event;
-    }
-
-    @Override
-    public PublicationCommandBuilder<T, R> key(R key) {
-        Objects.requireNonNull(key, "key");
-        this.key = key;
-        return this;
-    }
-
-    @Override
-    public PublicationCommand compile() {
-        return null;
-    }
-
-    @Override
-    public AsyncPublicationCommand compileAsync() {
-        return null;
-    }
-
-    private void checkCompiledStateAndMarkCompiled() {
-        if (compiled) {
-            throw new IllegalStateException("");//TODO Message
-        } else {
-            compiled = true;
-        }
-    }
+    Class<? extends FilterFactory<?>> value();
 }

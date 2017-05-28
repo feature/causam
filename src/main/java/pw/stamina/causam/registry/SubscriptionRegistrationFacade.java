@@ -26,6 +26,8 @@ import pw.stamina.causam.scan.SubscriberScanningStrategy;
 import pw.stamina.causam.subscribe.Subscription;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public interface SubscriptionRegistrationFacade {
 
@@ -35,4 +37,16 @@ public interface SubscriptionRegistrationFacade {
 
     boolean registerWith(Object subscriber,
                          SubscriberScanningStrategy strategy);
+
+    boolean unregister(Subscription<?> subscription);
+
+    boolean unregisterFor(Object subscriber);
+
+    boolean unregisterForIf(Object subscriber,
+                            Predicate<Subscription<?>> filter);
+
+    static SubscriptionRegistrationFacade simple(SubscriptionRegistry registry) {
+        Objects.requireNonNull(registry, "registry");
+        return new SimpleSubscriptionRegistrationFacade(registry);
+    }
 }

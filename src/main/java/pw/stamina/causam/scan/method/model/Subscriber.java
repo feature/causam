@@ -22,10 +22,7 @@
 
 package pw.stamina.causam.scan.method.model;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import static pw.stamina.causam.scan.method.model.Pausable.PausableType.NONE;
 
@@ -34,4 +31,6 @@ import static pw.stamina.causam.scan.method.model.Pausable.PausableType.NONE;
 public @interface Subscriber {
 
     Pausable pausable() default @Pausable(NONE);
+
+    boolean synchronize() default false;
 }

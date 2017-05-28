@@ -22,12 +22,12 @@
 
 package pw.stamina.causam.scan.method;
 
-import pw.stamina.causam.subscribe.listen.Listener;
 import pw.stamina.causam.scan.method.model.Synchronize;
+import pw.stamina.causam.select.Selector;
 import pw.stamina.causam.subscribe.Subscription;
 import pw.stamina.causam.subscribe.SubscriptionBuilder;
+import pw.stamina.causam.subscribe.listen.Listener;
 import pw.stamina.causam.subscribe.listen.decorate.SynchronizingListenerDecorator;
-import pw.stamina.causam.subscribe.listen.decorate.pause.PausableSubscriptionListenerDecorator;
 
 import java.lang.reflect.Method;
 
@@ -43,13 +43,16 @@ enum StandardMethodBasedSubscriptionFactory
         SubscriptionBuilder<?> builder = new SubscriptionBuilder<>();
 
         if (shouldSynchronizeListener(method)) {
-            builder.decorate(SynchronizingListenerDecorator.get());
+            builder.decorateListener(SynchronizingListenerDecorator.get());
         }
 
-        return builder
-                .subscriber(subscriber)
-                .listener(createListener(subscriber, method))
-                .build();
+        builder.subscriber(subscriber)
+                .selector(Selector.exact(method.getParameterTypes()[0]))//FIXME
+                .listener(createListener(subscriber, method));
+
+        createDecorateAndSetListener(builder, subscriber, method);
+
+        return builder.build();
     }
 
     private static void assureAccessible(Method method) {
@@ -58,11 +61,19 @@ enum StandardMethodBasedSubscriptionFactory
         }
     }
 
-    private static boolean shouldSynchronizeListener(Method method) {
-        return method.isAnnotationPresent(Synchronize.class);
+    private void createDecorateAndSetListener(SubscriptionBuilder<?> builder,
+                                              Object subscriber,
+                                              Method method) {
+        builder.listener(createListener(subscriber, method));
+
+
     }
 
     private static <T> Listener<T> createListener(Object subscriber, Method target) {
         return new MethodInvokingListener<>(subscriber, target);
+    }
+
+    private static boolean shouldSynchronizeListener(Method method) {
+        return method.isAnnotationPresent(Synchronize.class);
     }
 }

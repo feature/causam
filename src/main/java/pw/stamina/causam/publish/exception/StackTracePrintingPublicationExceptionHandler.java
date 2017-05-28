@@ -22,12 +22,12 @@
 
 package pw.stamina.causam.publish.exception;
 
-public enum StackTracePrintingPublicationExceptionHandler
+enum StackTracePrintingPublicationExceptionHandler
         implements PublicationExceptionHandler {
     INSTANCE;
 
     @Override
-    public void handleException(Exception exception,
+    public void handleException(PublicationException exception,
                                 PublicationExceptionContext context) {
         exception.printStackTrace();
     }
