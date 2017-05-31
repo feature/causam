@@ -20,65 +20,35 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.bus;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import pw.stamina.causam.subscribe.listen.Listener;
+import pw.stamina.causam.Identifier;
 
-@RunWith(MockitoJUnitRunner.class)
-public final class SubscriptionBuilderTest {
+import java.util.UUID;
+
+public final class EventBusTests {
 
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
-    @Mock
-    private Listener<Object> listener;
-
-    private SubscriptionBuilder<?> builder;
-
-    @Before
-    public void setupBuilder() {
-        builder = new SubscriptionBuilder<>();
-    }
-
-    //TODO: Test decorateListener
-    //TODO: Test build method
-
 
     @Test
-    public void testSubscriberThrowsExceptionIfInputIsNull() {
-        thrown.expect(NullPointerException.class);
-        thrown.expectMessage("subscriber");
-
-        builder.subscriber(null);
-    }
-
-    @Test
-    public void testIdentifierThrowsExceptionIfInputIsNull() {
+    public void builder_IdentifierInputIsNull_shouldThrownNullPointerException() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("identifier");
 
-        builder.identifier(null);
+        EventBus.builder(null);
     }
 
     @Test
-    public void testSelectorThrowsExceptionIfInputIsNull() {
-        thrown.expect(NullPointerException.class);
-        thrown.expectMessage("selector");
-
-        builder.selector(null);
+    public void builder_identifierWithEmptyValue_shouldCreateTestWithSpecifiedIdentifier() {
+        EventBus.builder(Identifier.empty());
     }
 
     @Test
-    public void testListenerThrowsExceptionIfInputIsNull() {
-        thrown.expect(NullPointerException.class);
-        thrown.expectMessage("listener");
-
-        builder.listener(null);
+    public void builder_identifierWithRandomUUIDAsValue_shouldCreateTestWithSpecifiedIdentifier() {
+        EventBus.builder(Identifier.of(UUID.randomUUID().toString()));
     }
 }

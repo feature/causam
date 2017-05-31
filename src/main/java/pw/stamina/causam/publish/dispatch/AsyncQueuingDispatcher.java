@@ -27,10 +27,10 @@ import pw.stamina.causam.subscribe.Subscription;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public final class AsyncQueuingDispatcher implements Dispatcher {
+final class AsyncQueuingDispatcher implements Dispatcher {
     private final Queue<SubscriptionWithEventContainer<?>> queued;
 
-    public AsyncQueuingDispatcher() {
+    AsyncQueuingDispatcher() {
         queued = new ConcurrentLinkedQueue<>();
     }
 

@@ -20,34 +20,37 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.subscribe;
+package pw.stamina.causam.bus;
 
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import pw.stamina.causam.Identifier;
-import pw.stamina.causam.publish.exception.PublicationException;
-import pw.stamina.causam.select.Selector;
+import pw.stamina.causam.bus.EventBus.Builder;
+import pw.stamina.causam.publish.dispatch.Dispatcher;
+import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
+import pw.stamina.causam.registry.SubscriptionRegistry;
+import pw.stamina.causam.select.SubscriptionSelectorService;
 
-import java.util.Map;
+import java.util.function.Supplier;
 
-/**
- * Defines an event subscription, its properties
- * and how events should be published to the
- * subscription listener.
- *
- * @param <T> the accepted event type
- */
-public interface Subscription<T> {
+@Ignore
+@RunWith(MockitoJUnitRunner.class)
+public final class EventBusBuilderTests {
 
-    Object getSubscriber();
+    private Builder builder;
 
-    Identifier getIdentifier();
+    @Mock private Supplier<SubscriptionRegistry> registry;
+    @Mock private Supplier<SubscriptionSelectorService> selector;
+    @Mock private Supplier<Dispatcher> dispatcher;
+    @Mock private Supplier<PublicationExceptionHandler> exceptionHandler;
 
-    Selector getSelector();
+    @Before
+    public void setupBuilderWithEmptyIdentifier() {
+        builder = EventBus.builder(Identifier.empty());
+    }
 
-    void call(T event) throws PublicationException;
-
-    <R> boolean hasDecoration(Class<R> decorationType);
-
-    <R> R getDecoration(Class<R> decorationType);
-
-    Map<Class<?>, ?> getDecorations();
+    //TODO: Tests
 }

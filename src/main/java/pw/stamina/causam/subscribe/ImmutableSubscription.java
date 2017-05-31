@@ -29,7 +29,6 @@ import pw.stamina.causam.subscribe.listen.Listener;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
 final class ImmutableSubscription<T> implements Subscription<T> {
     private final Object subscriber;
@@ -56,8 +55,8 @@ final class ImmutableSubscription<T> implements Subscription<T> {
     }
 
     @Override
-    public Optional<Identifier> getIdentifier() {
-        return Optional.of(identifier);
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override
@@ -71,16 +70,16 @@ final class ImmutableSubscription<T> implements Subscription<T> {
     }
 
     @Override
+    public <R> boolean hasDecoration(Class<R> decorationType) {
+        return decorations.containsKey(decorationType);
+    }
+
+    @Override
     public <R> R getDecoration(Class<R> decorationType) {
         @SuppressWarnings("unchecked")
         R decoration = (R) decorations.get(decorationType);
 
         return decoration;
-    }
-
-    @Override
-    public <R> boolean hasDecoration(Class<R> decorationType) {
-        return decorations.containsKey(decorationType);
     }
 
     @Override

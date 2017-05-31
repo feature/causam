@@ -26,9 +26,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.*;
 
-public final class IdentifierTest {
+public final class IdentifierTests {
 
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
@@ -37,12 +39,12 @@ public final class IdentifierTest {
     private final Identifier identifier = Identifier.of(identifierValue);
 
     @Test
-    public void testEmptyReturnsSameInstance() {
-        assertSame(Identifier.empty(), Identifier.empty());
+    public void empty_shouldReturnTheSameIdentifierObject() {
+        assertThat(Identifier.empty(), sameInstance(Identifier.empty()));
     }
 
     @Test
-    public void testOfThrowsExceptionIfInputIsNull() {
+    public void of_inputValueIsNull_ThrowsException() {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("Identifier value cannot be null");
 
@@ -50,7 +52,7 @@ public final class IdentifierTest {
     }
 
     @Test
-    public void testOfThrowsExceptionIfInputIsEmpty() {
+    public void of_inputValueIsEmpty_ThrowsExceptionAndSuggestsEmptyIdentifierSingleton() {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage( "Identifier value is empty. Use Identifier.empty() instead");
 
@@ -58,41 +60,42 @@ public final class IdentifierTest {
     }
 
     @Test
-    public void testEqualsOnSameInstance() {
-        assertEquals(identifier, identifier);
+    public void equals_parameterIsSameIdentifierInstance_shouldReturnTrue() {
+        assertThat(identifier.equals(identifier), is(true));
     }
 
     @Test
-    public void testEqualsOnIdentifierWithEqualValue() {
+    public void equals_otherIdentifierWithEqualValue_shouldReturnTrue() {
         Identifier otherIdentifier = Identifier.of(identifierValue);
 
-        assertEquals(identifier, otherIdentifier);
+        assertThat(identifier.equals(otherIdentifier), is(true));
     }
 
     @Test
-    public void testEqualsRejectsNulls() {
-        assertNotEquals(identifier, null);
+    public void equals_parameterIsNull_shouldReturnFalse() {
+        assertThat(identifier.equals(null), is(false));
     }
 
     @Test
-    public void testEqualsOnObjectInstance() {
-        assertNotEquals(identifier, new Object());
+    public void equals_objectTypeOtherThanIdentifier_shouldReturnFalse() {
+        assertThat(identifier.equals(new Object()), is(false));
+        assertThat(identifier.equals(identifierValue), is(false));
     }
 
     @Test
-    public void testEqualsOnOtherIdentifier() {
+    public void equals_IdentifierWithDifferentValue_shouldReturnFalse() {
         Identifier otherIdentifier = Identifier.of("other");
 
-        assertNotEquals(identifier, otherIdentifier);
+        assertThat(identifier.equals(otherIdentifier), is(false));
     }
 
     @Test
-    public void testHashCodeReturnsHashCodeOfIdentifierValue() {
-        assertEquals(identifier.hashCode(), identifierValue.hashCode());
+    public void hashCode_shouldReturnHashCodeOfIdentifierValue() {
+        assertThat(identifier.hashCode(), is(identifierValue.hashCode()));
     }
 
     @Test
-    public void testToStringReturnsIdentifierValue() {
-        assertSame(identifier.toString(), identifierValue);
+    public void toString_shouldReturnSameStringAsSpecifiedInConstructor() {
+        assertThat(identifier.toString(), sameInstance(identifierValue));
     }
 }

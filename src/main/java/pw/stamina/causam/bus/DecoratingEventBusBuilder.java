@@ -33,7 +33,7 @@ import pw.stamina.causam.select.caching.CachingSubscriptionSelectorService;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-final class LazyEventBusBuilder implements EventBus.Builder {
+final class DecoratingEventBusBuilder implements EventBus.Builder {
     private static final Supplier<PublicationExceptionHandler>
             DEFAULT_NULL_RETURNING_EXCEPTION_HANDLER_SUPPLIER = () -> null;
 
@@ -44,7 +44,7 @@ final class LazyEventBusBuilder implements EventBus.Builder {
     private Supplier<PublicationExceptionHandler> exceptionHandler =
             DEFAULT_NULL_RETURNING_EXCEPTION_HANDLER_SUPPLIER;
 
-    public LazyEventBusBuilder(Identifier identifier) {
+    DecoratingEventBusBuilder(Identifier identifier) {
         this.identifier = identifier;
     }
 
@@ -81,7 +81,7 @@ final class LazyEventBusBuilder implements EventBus.Builder {
     public EventBus build() {
         validateBuilderVariablesHasBeenSet();
 
-        return new LazyEventBusBuilderWorker(
+        return new Worker(
                 registry.get(),
                 selector.get(),
                 dispatcher.get(),
@@ -94,16 +94,16 @@ final class LazyEventBusBuilder implements EventBus.Builder {
         Objects.requireNonNull(registry, "register must be defined before the build method is called");
     }
 
-    private final class LazyEventBusBuilderWorker {
+    private final class Worker {
         private final SubscriptionRegistry registry;
         private final SubscriptionSelectorService selector;
         private final Dispatcher dispatcher;
         private final PublicationExceptionHandler exceptionHandler;
 
-        LazyEventBusBuilderWorker(SubscriptionRegistry registry,
-                                  SubscriptionSelectorService selector,
-                                  Dispatcher dispatcher,
-                                  PublicationExceptionHandler exceptionHandler) {
+        Worker(SubscriptionRegistry registry,
+               SubscriptionSelectorService selector,
+               Dispatcher dispatcher,
+               PublicationExceptionHandler exceptionHandler) {
             this.registry = registry;
             this.selector = selector;
             this.dispatcher = dispatcher;

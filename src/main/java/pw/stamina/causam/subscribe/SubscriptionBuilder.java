@@ -68,22 +68,33 @@ public final class SubscriptionBuilder<T> {
     }
 
     public <R> SubscriptionBuilder<T> decorateListener(
-            SubscriptionListenerDecorator<T, R> decorator) {
-        //TODO: Verify listener has been set
+            SubscriptionListenerDecorator<T, R> decorator)
+            throws IllegalArgumentException, IllegalStateException {
+
+        validateListenerHasBeenSet();
+
+        Objects.requireNonNull(decorator, "decorator");
         Class<R> decorationType = decorator.getDecorationType();
         R decoration = decorator.getDecoration();
 
         Objects.requireNonNull(decorationType, "decorationType");
         Objects.requireNonNull(decoration, "decoration");
 
-        if (decorations.containsKey(decorationType)) {
-            //TODO: Throw exception
-        }
+        verifyDecorationTypeHasNotAlreadyBeenApplied(decorationType);
 
         listener = decorator.decorate(listener);
         decorations.put(decorationType, decoration);
 
         return this;
+    }
+
+    private void verifyDecorationTypeHasNotAlreadyBeenApplied(
+            Class<?> decorationType) {
+        if (decorations.containsKey(decorationType)) {
+            throw new IllegalArgumentException(String.format(
+                    "A decoration of type '%s' has already been applied.",
+                    decorationType));
+        }
     }
 
     public Subscription<T> build() {
@@ -104,7 +115,13 @@ public final class SubscriptionBuilder<T> {
         } else if (selector == null) {
             throw new IllegalStateException("selector has not been set, " +
                     "please set it using the #selector method.");
-        } else if (listener == null) {
+        }
+
+        validateListenerHasBeenSet();
+    }
+
+    private void validateListenerHasBeenSet() {
+        if (listener == null) {
             throw new IllegalStateException("listener has not been set, " +
                     "please set it using the #listener method.");
         }

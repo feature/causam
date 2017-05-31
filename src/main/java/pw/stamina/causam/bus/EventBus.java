@@ -57,6 +57,6 @@ public interface EventBus {
 
     static Builder builder(Identifier identifier) {
         Objects.requireNonNull(identifier, "identifier");
-        return new LazyEventBusBuilder(identifier);
+        return new DecoratingEventBusBuilder(identifier);
     }
 }
