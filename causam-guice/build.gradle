@@ -1,0 +1,6 @@
+group 'pw.stamina'
+version '1.0.0-SNAPSHOT'
+
+dependencies {
+    compile project(':causam-core')
+}
