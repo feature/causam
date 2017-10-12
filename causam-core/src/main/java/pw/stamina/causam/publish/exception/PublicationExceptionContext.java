@@ -24,13 +24,17 @@ package pw.stamina.causam.publish.exception;
 
 import pw.stamina.causam.subscribe.Subscription;
 
+import java.util.Objects;
+
 public final class PublicationExceptionContext<T> {
     private final Subscription<T> subscription;
     private final T event;
 
-    //TODO: Reject nulls
     public PublicationExceptionContext(Subscription<T> subscription,
                                        T event) {
+        Objects.requireNonNull(subscription, "subscription");
+        Objects.requireNonNull(event, "event");
+
         this.subscription = subscription;
         this.event = event;
     }
