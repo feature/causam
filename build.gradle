@@ -1,11 +1,9 @@
-group 'pw.stamina'
-version '1.0.0-SNAPSHOT'
+group 'pw.stamina.causam'
 
 apply plugin: 'java'
 
 subprojects {
-    group = 'pw.stamina'
-    version = rootProject.version
+    group = rootProject.group
 
     apply plugin: 'java'
     apply plugin: 'maven'
