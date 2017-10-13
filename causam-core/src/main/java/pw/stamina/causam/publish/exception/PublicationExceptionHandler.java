@@ -44,6 +44,6 @@ public interface PublicationExceptionHandler {
                          PublicationExceptionContext context);
 
     static PublicationExceptionHandler stackTracePrinting() {
-        return StackTracePrintingPublicationExceptionHandler.INSTANCE;
+        return new StackTracePrintingPublicationExceptionHandler();
     }
 }
