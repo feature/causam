@@ -1,3 +1,17 @@
+buildscript {
+    ext {
+        junit_gradle_plugin_version = '1.0.1'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.junit.platform:junit-platform-gradle-plugin:$junit_gradle_plugin_version"
+    }
+}
+
 group 'pw.stamina.causam'
 
 subprojects {
@@ -5,6 +19,7 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'org.junit.platform.gradle.plugin'
 
     tasks.withType(JavaCompile) {
         sourceCompatibility = 1.8
@@ -13,7 +28,7 @@ subprojects {
     }
 
     ext {
-        junit_jupiter_version = '5.0.0'
+        junit_jupiter_version = '5.0.1'
         mockito_version = '2.10.0'
     }
 
