@@ -1,7 +1,5 @@
 group 'pw.stamina.causam'
 
-apply plugin: 'java'
-
 subprojects {
     group = rootProject.group
 
