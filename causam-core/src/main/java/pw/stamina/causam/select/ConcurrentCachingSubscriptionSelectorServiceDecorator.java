@@ -26,57 +26,75 @@ import pw.stamina.causam.subscribe.Subscription;
 
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-//TODO
 public final class ConcurrentCachingSubscriptionSelectorServiceDecorator implements SubscriptionSelectorService {
     private final SubscriptionSelectorService backingSelectorService;
-    private final ConcurrentMap<Class<?>, Collection<Subscription<?>>>
-            cachedFlattenedClassToSubscriptionsHierarchy;
+    private final ConcurrentMap<Class<?>, Collection<Subscription<?>>> cachedSubscriptions;
+    private final ConcurrentSubscriptionCacheInvalidator cacheInvalidator;
 
     @Inject
     ConcurrentCachingSubscriptionSelectorServiceDecorator(SubscriptionSelectorService backingSelectorService) {
         this.backingSelectorService = backingSelectorService;
-        cachedFlattenedClassToSubscriptionsHierarchy = new ConcurrentHashMap<>();
+        this.cachedSubscriptions = new ConcurrentHashMap<>();
+        this.cacheInvalidator = new ConcurrentSubscriptionCacheInvalidator();
     }
 
     @Override
     public <T> Collection<Subscription<T>> selectSubscriptions(
             Class<T> key, Supplier<Stream<Subscription<?>>> subscriptions) {
-        //TODO: Caching mechanism
+        return uncheckedCast(cachedSubscriptions.computeIfAbsent(key, selectSubscriptions(subscriptions)));
+    }
 
-        return backingSelectorService.selectSubscriptions(key, subscriptions);
+    private Function<Class<?>, Collection<Subscription<?>>> selectSubscriptions(Supplier<Stream<Subscription<?>>> subscriptions) {
+        return key -> uncheckedCast(backingSelectorService.selectSubscriptions(key, subscriptions));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T uncheckedCast(Object obj) {
+        return (T) obj;
     }
 
     @Override
     public Optional<SubscriptionCacheInvalidator> getCacheInvalidator() {
-        return null;
+        return Optional.of(cacheInvalidator);
     }
 
-    /*
-    @Override
-    public void notifySubscriptionAdded(Subscription<?> subscription) {
-        removeCachedEntries(subscription);
+    private final class ConcurrentSubscriptionCacheInvalidator implements SubscriptionCacheInvalidator {
+
+        @Override
+        public void invalidateFor(Subscription<?> subscription) {
+            cachedSubscriptions.values().removeIf(contains(subscription));
+        }
+
+        @Override
+        public void invalidateForAll(Collection<Subscription<?>> subscriptions) {
+            cachedSubscriptions.values().removeIf(containsAny(subscriptions));
+        }
+
+        @Override
+        public void invalidateIf(Predicate<Subscription<?>> filter) {
+            cachedSubscriptions.values().removeIf(anyMatch(filter));
+        }
+
     }
 
-    @Override
-    public void notifySubscriptionsRemovedIf(Predicate<Subscription<?>> filter) {
-        cachedFlattenedClassToSubscriptionsHierarchy.values()
-                .removeIf(doesAnySubscriptionMatchFilter(filter));
+    private static Predicate<Collection<Subscription<?>>> contains(Subscription<?> subscription) {
+        return subscriptions -> subscriptions.contains(subscription);
     }
 
-    private Predicate<Collection<Subscription<?>>> doesAnySubscriptionMatchFilter(
-            Predicate<Subscription<?>> filter) {
+    private static Predicate<Collection<Subscription<?>>> containsAny(Collection<Subscription<?>> subscriptions) {
+        return cachedSubscriptionsValue -> !Collections.disjoint(cachedSubscriptionsValue, subscriptions);
+    }
+
+    private static Predicate<Collection<Subscription<?>>> anyMatch(Predicate<Subscription<?>> filter) {
         return subscriptions -> subscriptions.stream().anyMatch(filter);
     }
-
-    private void removeCachedEntries(Subscription<?> subscription) {
-        cachedFlattenedClassToSubscriptionsHierarchy.keySet()
-                .removeIf(subscription.getKeySelector()::canSelect);
-    }
-    */
 }
