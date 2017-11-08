@@ -27,19 +27,16 @@ import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
 import pw.stamina.causam.subscribe.Subscription;
 
 import javax.inject.Inject;
-import java.util.LinkedList;
-import java.util.List;
 
 public final class ExceptionHandlingPublisherDecorator implements Publisher {
     private final Publisher publisher;
-    private final List<PublicationExceptionHandler> exceptionHandlers;
+    private final PublicationExceptionHandler exceptionHandlers;
 
     @Inject
     ExceptionHandlingPublisherDecorator(Publisher publisher,
                                         PublicationExceptionHandler exceptionHandler) {
         this.publisher = publisher;
-        this.exceptionHandlers = new LinkedList<>();
-        addExceptionHandler(exceptionHandler);
+        this.exceptionHandlers = exceptionHandler;
     }
 
     @Override
@@ -47,16 +44,8 @@ public final class ExceptionHandlingPublisherDecorator implements Publisher {
         try {
             publisher.publish(event, subscriptions);
         } catch (PublicationException e) {
-            handleException(e);
+            //TODO: Provide PublicationExceptionContext
+            exceptionHandlers.handleException(e, null);
         }
-    }
-
-    public void addExceptionHandler(PublicationExceptionHandler exceptionHandler) {
-        exceptionHandlers.add(exceptionHandler);
-    }
-
-    private void handleException(PublicationException e) {
-        //TODO: Provide PublicationExceptionContext
-        exceptionHandlers.forEach(handler -> handler.handleException(e, null));
     }
 }
