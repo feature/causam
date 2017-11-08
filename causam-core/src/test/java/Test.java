@@ -29,7 +29,7 @@ public class Test {
         Test test = new Test();
         EventBus bus = null; //TODO: Construct event bus
 
-        //SubscriptionRegistrationFacade.simple(bus.getRegistry())
+        //SubscriptionRegistryFacade.simple(bus.getRegistry())
         //        .registerWith(test, MethodSubscriberScanningStrategy.standard());
 
         bus.post("Test message 1");

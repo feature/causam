@@ -55,7 +55,6 @@ public final class SubscriptionProxyFactory {
     }
 
     private static <T> Class<?>[] createInterfacesArray(ListenerDecoratorContainer<T> decorators) {
-
         List<Class<?>> interfaces = new LinkedList<>();
 
         interfaces.add(Subscription.class);

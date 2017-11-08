@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pw.stamina.causam.publish.Publisher;
-import pw.stamina.causam.registry.SubscriptionRegistrationFacade;
 import pw.stamina.causam.registry.SubscriptionRegistry;
 import pw.stamina.causam.select.SubscriptionSelectorService;
 import pw.stamina.causam.subscribe.Subscription;
@@ -45,7 +44,6 @@ public final class StandardEventBusTests {
     private final String busIdentifier = "test-bus";
 
     @Mock private SubscriptionRegistry registry;
-    @Mock private SubscriptionRegistrationFacade registrationFacade;
     @Mock private SubscriptionSelectorService selector;
     @Mock private Publisher publisher;
     @Mock private Subscription<Object> subscription;

@@ -25,26 +25,24 @@ package pw.stamina.causam.select;
 import pw.stamina.causam.subscribe.Subscription;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public final class ConcurrentCachingSubscriptionSelectorServiceDecorator implements SubscriptionSelectorService {
+public final class CachingSubscriptionSelectorServiceDecorator implements SubscriptionSelectorService {
     private final SubscriptionSelectorService backingSelectorService;
-    private final ConcurrentMap<Class<?>, Collection<Subscription<?>>> cachedSubscriptions;
-    private final ConcurrentSubscriptionCacheInvalidator cacheInvalidator;
+    private final SubscriptionCacheInvalidatorImpl cacheInvalidator;
+    private final Map<Class<?>, Collection<Subscription<?>>> cachedSubscriptions;
 
     @Inject
-    ConcurrentCachingSubscriptionSelectorServiceDecorator(SubscriptionSelectorService backingSelectorService) {
+    CachingSubscriptionSelectorServiceDecorator(SubscriptionSelectorService backingSelectorService,
+                                                Map<Class<?>, Collection<Subscription<?>>> cachedSubscriptions) {
         this.backingSelectorService = backingSelectorService;
-        this.cachedSubscriptions = new ConcurrentHashMap<>();
-        this.cacheInvalidator = new ConcurrentSubscriptionCacheInvalidator();
+        this.cachedSubscriptions = cachedSubscriptions;
+        this.cacheInvalidator = new SubscriptionCacheInvalidatorImpl();
     }
 
     @Override
@@ -53,7 +51,8 @@ public final class ConcurrentCachingSubscriptionSelectorServiceDecorator impleme
         return uncheckedCast(cachedSubscriptions.computeIfAbsent(key, selectSubscriptions(subscriptions)));
     }
 
-    private Function<Class<?>, Collection<Subscription<?>>> selectSubscriptions(Supplier<Stream<Subscription<?>>> subscriptions) {
+    private Function<Class<?>, Collection<Subscription<?>>> selectSubscriptions(
+            Supplier<Stream<Subscription<?>>> subscriptions) {
         return key -> uncheckedCast(backingSelectorService.selectSubscriptions(key, subscriptions));
     }
 
@@ -67,7 +66,7 @@ public final class ConcurrentCachingSubscriptionSelectorServiceDecorator impleme
         return Optional.of(cacheInvalidator);
     }
 
-    private final class ConcurrentSubscriptionCacheInvalidator implements SubscriptionCacheInvalidator {
+    private final class SubscriptionCacheInvalidatorImpl implements SubscriptionCacheInvalidator {
 
         @Override
         public void invalidateFor(Subscription<?> subscription) {
@@ -96,5 +95,13 @@ public final class ConcurrentCachingSubscriptionSelectorServiceDecorator impleme
 
     private static Predicate<Collection<Subscription<?>>> anyMatch(Predicate<Subscription<?>> filter) {
         return subscriptions -> subscriptions.stream().anyMatch(filter);
+    }
+
+    public static SubscriptionSelectorService concurrent(SubscriptionSelectorService backingSelectorService) {
+        return new CachingSubscriptionSelectorServiceDecorator(backingSelectorService, new ConcurrentHashMap<>());
+    }
+
+    public static SubscriptionSelectorService standard(SubscriptionSelectorService backingSelectorService) {
+        return new CachingSubscriptionSelectorServiceDecorator(backingSelectorService, new HashMap<>());
     }
 }
