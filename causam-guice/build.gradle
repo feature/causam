@@ -5,6 +5,6 @@ ext {
 }
 
 dependencies {
-    compile project(':causam-core')
-    compile "com.google.inject:guice:$guice_version"
+    api project(':causam-core')
+    api "com.google.inject:guice:$guice_version"
 }
