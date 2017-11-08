@@ -22,12 +22,14 @@
 
 package pw.stamina.causam;
 
+import pw.stamina.causam.publish.listen.Listener;
+
 /**
- * An event may implement this interface to signal that is it
- * cancellable. If an event is cancelled, it should not be published
- * to {@link pw.stamina.causam.publish.listen.Listener#publish(Object) Listeners},
- * unless it is specifically that the listener ignores the
- * cancelled state.
+ * An event may implement this interface to signal that is
+ * it cancellable. If an event is cancelled, it should not
+ * be {@link Listener#publish(Object) published} to listeners,
+ * unless it is explicitly stated that that the listener
+ * should ignores the cancelled state.
  */
 public interface Cancellable {
 
@@ -46,10 +48,7 @@ public interface Cancellable {
     boolean isCancelled();
 
     /**
-     * Cancels the event as if:
-     * <pre> {@code
-     * setCancelled(true);
-     *  }</pre>
+     * Cancels the event.
      */
     void cancel();
 }

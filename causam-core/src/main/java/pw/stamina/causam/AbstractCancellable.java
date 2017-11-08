@@ -23,10 +23,12 @@
 package pw.stamina.causam;
 
 /**
- *
+ * A simple abstract implementation of the {@link Cancellable}
+ * interface. This class provides standard cancellable
+ * functionality to any extending class.
  */
 public abstract class AbstractCancellable implements Cancellable {
-    protected boolean cancelled;
+    private boolean cancelled;
 
     @Override
     public void setCancelled(boolean cancelled) {
@@ -38,6 +40,15 @@ public abstract class AbstractCancellable implements Cancellable {
         return cancelled;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec
+     * Cancels the event as if:
+     * <pre> {@code
+     * setCancelled(true);
+     *  }</pre>
+     */
     @Override
     public final void cancel() {
         setCancelled(true);
