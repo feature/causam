@@ -22,7 +22,7 @@
 
 package pw.stamina.causam.registry;
 
-import pw.stamina.causam.select.SubscriptionSelectorService;
+import pw.stamina.causam.scan.SubscriberScanningStrategy;
 import pw.stamina.causam.subscribe.Subscription;
 
 import java.util.Collection;
@@ -36,18 +36,21 @@ public interface SubscriptionRegistry {
 
     boolean registerAll(Collection<Subscription<?>> subscriptions);
 
+    boolean registerWith(Object subscriber, SubscriberScanningStrategy strategy);
+
+    boolean unregister(Subscription<?> subscription);
+
+    boolean unregisterFor(Object subscriber);
+
     boolean unregisterIf(Predicate<Subscription<?>> filter);
+
+    boolean unregisterForIf(Object subscriber, Predicate<Subscription<?>> filter);
 
     Stream<Subscription<?>> findSubscriptions(Object subscriber);
 
     Stream<Subscription<?>> findAllSubscriptions();
 
     <T> Collection<Subscription<T>> selectSubscriptions(Class<T> key);
-
-    static SubscriptionRegistry copyOnWrite(SubscriptionSelectorService selectorService) {
-        Objects.requireNonNull(selectorService, "selectorService");
-        return new CopyOnWriteSubscriptionRegistry(selectorService);
-    }
 
     static SubscriptionRegistry nullRejecting(SubscriptionRegistry registry) {
         Objects.requireNonNull(registry, "registry");

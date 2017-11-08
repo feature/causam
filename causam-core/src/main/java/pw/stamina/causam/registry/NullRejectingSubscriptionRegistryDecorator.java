@@ -22,6 +22,7 @@
 
 package pw.stamina.causam.registry;
 
+import pw.stamina.causam.scan.SubscriberScanningStrategy;
 import pw.stamina.causam.subscribe.Subscription;
 
 import javax.inject.Inject;
@@ -31,50 +32,77 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public final class NullRejectingSubscriptionRegistryDecorator implements SubscriptionRegistry {
-
-    private final SubscriptionRegistry delegate;
+    private final SubscriptionRegistry registry;
 
     @Inject
-    NullRejectingSubscriptionRegistryDecorator(SubscriptionRegistry delegate) {
-        this.delegate = delegate;
+    NullRejectingSubscriptionRegistryDecorator(SubscriptionRegistry registry) {
+        this.registry = registry;
     }
 
     @Override
     public boolean register(Subscription<?> subscription) {
         Objects.requireNonNull(subscription, "subscription");
-        return delegate.register(subscription);
+        return registry.register(subscription);
     }
 
     @Override
     public boolean registerAll(Collection<Subscription<?>> subscriptions) {
         validateSubscriptionsInput(subscriptions);
-        return delegate.registerAll(subscriptions);
+        return registry.registerAll(subscriptions);
     }
 
     private void validateSubscriptionsInput(Collection<Subscription<?>> subscriptions) {
         Objects.requireNonNull(subscriptions, "subscriptions");
-        subscriptions.forEach(subscription -> Objects.requireNonNull(subscription, "subscription is null"));
+        subscriptions.forEach(Objects::requireNonNull);
+    }
+
+    @Override
+    public boolean registerWith(Object subscriber, SubscriberScanningStrategy strategy) {
+        Objects.requireNonNull(subscriber, "subscriber");
+        Objects.requireNonNull(strategy, "strategy");
+
+        return registry.registerWith(subscriber, strategy);
+    }
+
+    @Override
+    public boolean unregister(Subscription<?> subscription) {
+        Objects.requireNonNull(subscription, "subscription");
+        return registry.register(subscription);
+    }
+
+    @Override
+    public boolean unregisterFor(Object subscriber) {
+        Objects.requireNonNull(subscriber, "subscriber");
+        return registry.unregisterFor(subscriber);
     }
 
     @Override
     public boolean unregisterIf(Predicate<Subscription<?>> filter) {
         Objects.requireNonNull(filter, "filter");
-        return delegate.unregisterIf(filter);
+        return registry.unregisterIf(filter);
+    }
+
+    @Override
+    public boolean unregisterForIf(Object subscriber, Predicate<Subscription<?>> filter) {
+        Objects.requireNonNull(subscriber, "subscriber");
+        Objects.requireNonNull(filter, "filter");
+        return registry.unregisterForIf(subscriber, filter);
     }
 
     @Override
     public Stream<Subscription<?>> findSubscriptions(Object subscriber) {
         Objects.requireNonNull(subscriber, "subscriber");
-        return delegate.findSubscriptions(subscriber);
+        return registry.findSubscriptions(subscriber);
     }
 
     @Override
     public Stream<Subscription<?>> findAllSubscriptions() {
-        return delegate.findAllSubscriptions();
+        return registry.findAllSubscriptions();
     }
 
     @Override
     public <T> Collection<Subscription<T>> selectSubscriptions(Class<T> key) {
-        return delegate.selectSubscriptions(key);
+        // Not validate for optimization reasons
+        return registry.selectSubscriptions(key);
     }
 }
