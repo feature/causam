@@ -28,10 +28,9 @@ import java.lang.reflect.Method;
 
 public interface MethodBasedSubscriptionFactory {
 
-    Subscription<?> createSubscription(Object subscriber,
-                                       Method method);
+    <T> Subscription<T> createSubscription(Object subscriber, Method method, Class<T> eventType);
 
     static MethodBasedSubscriptionFactory standard() {
-        return StandardMethodBasedSubscriptionFactory.INSTANCE;
+        return new StandardMethodBasedSubscriptionFactory();
     }
 }

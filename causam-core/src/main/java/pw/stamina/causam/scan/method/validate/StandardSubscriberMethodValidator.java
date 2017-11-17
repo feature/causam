@@ -23,23 +23,40 @@
 package pw.stamina.causam.scan.method.validate;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
-enum StandardSubscriberMethodValidator implements SubscriberMethodValidator {
-    INSTANCE;
+final class StandardSubscriberMethodValidator implements SubscriberMethodValidator {
 
     @Override
     public void validate(Method method) throws IllegalSubscriberMethodException {
+        String exceptionMessage = _validate(method);
+
+        if (exceptionMessage != null) {
+            throw new IllegalSubscriberMethodException(method, exceptionMessage);
+        }
+    }
+
+    public String _validate(Method method) {//TODO: Refactor method name
         if (!methodHasOneParameter(method)) {
-            throw new IllegalSubscriberMethodException(method,
-                    "An annotated subscriber method may only have exactly " +
-                            "1 parameter. Method: " + method);
+            return "subscriber methods must have exactly 1 parameter";
+        } else if (isStaticMethod(method)) {
+            return "subscriber methods cannot be static";
+        } else if (isSynchronizedMethod(method)) {
+            return "subscriber methods cannot be synchronized, use the @Synchronize annotation instead";
         }
 
-        //TODO: Check other method conditions?
-        //TODO: Disallow synchronized methods, use annotation instead
+        return null;
     }
 
     private static boolean methodHasOneParameter(Method method) {
         return method.getParameterCount() == 1;
+    }
+
+    private static boolean isStaticMethod(Method method) {
+        return Modifier.isStatic(method.getModifiers());
+    }
+
+    private static boolean isSynchronizedMethod(Method method) {
+        return Modifier.isSynchronized(method.getModifiers());
     }
 }

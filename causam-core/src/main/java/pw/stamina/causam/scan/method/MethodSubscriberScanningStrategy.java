@@ -28,10 +28,10 @@ import pw.stamina.causam.scan.method.model.Subscriber;
 import pw.stamina.causam.scan.method.validate.IllegalSubscriberMethodException;
 import pw.stamina.causam.scan.method.validate.SubscriberMethodValidator;
 import pw.stamina.causam.scan.result.ScanResult;
-import pw.stamina.causam.scan.result.ScanResultCollector;
+import pw.stamina.causam.scan.result.ScanResultBuilder;
+import pw.stamina.causam.subscribe.Subscription;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Objects;
 
 public final class MethodSubscriberScanningStrategy implements SubscriberScanningStrategy {
@@ -50,15 +50,37 @@ public final class MethodSubscriberScanningStrategy implements SubscriberScannin
     }
 
     @Override
-    public ScanResult scan(Object subscriber) throws IllegalSubscriberMethodException {
+    public ScanResult scan(Object subscriber) {
         Objects.requireNonNull(subscriber, "subscriber input cannot be null");
         Method[] methods = subscriber.getClass().getDeclaredMethods();
 
-        return Arrays.stream(methods)
-                .filter(this::isSubscriberMethod)
-                .peek(validator::validate)
-                .map(method -> subscriptionFactory.createSubscription(subscriber, method))
-                .collect(ScanResultCollector.INSTANCE);
+        // Is marked as Subscriber method
+        // Is a valid Subscriber method
+        // Extract event type parameter
+        // Create subscription
+        // Collect to ScanResult
+
+        ScanResultBuilder resultBuilder = new ScanResultBuilder();
+        for (Method method : methods) {
+            if (isSubscriberMethod(method)) {
+                continue;
+            }
+
+            try {
+                validator.validate(method);
+            } catch (IllegalSubscriberMethodException e) {
+                e.printStackTrace();
+                continue;
+                //TODO: Handle
+            }
+
+            Class<?> eventType = method.getParameterTypes()[0];
+
+            Subscription<?> subscription = subscriptionFactory.createSubscription(subscriber, method, eventType);
+            resultBuilder.addSubscription(subscription);
+        }
+
+        return resultBuilder.build();
     }
 
     private boolean isSubscriberMethod(Method method) {

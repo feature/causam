@@ -26,5 +26,5 @@ import pw.stamina.causam.scan.result.ScanResult;
 
 public interface SubscriberScanningStrategy {
 
-    ScanResult scan(Object subscriber) throws ScanFailedException;
+    ScanResult scan(Object subscriber);
 }

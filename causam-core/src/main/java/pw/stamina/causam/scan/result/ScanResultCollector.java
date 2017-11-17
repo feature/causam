@@ -32,9 +32,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-public enum ScanResultCollector implements
-        Collector<Subscription<?>, ScanResultBuilder, ScanResult> {
-    INSTANCE;
+public final class ScanResultCollector implements Collector<Subscription<?>, ScanResultBuilder, ScanResult> {
 
     @Override
     public Supplier<ScanResultBuilder> supplier() {

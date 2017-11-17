@@ -32,22 +32,20 @@ import pw.stamina.causam.subscribe.SubscriptionBuilder;
 
 import java.lang.reflect.Method;
 
-enum StandardMethodBasedSubscriptionFactory implements MethodBasedSubscriptionFactory {
-    INSTANCE;
+final class StandardMethodBasedSubscriptionFactory implements MethodBasedSubscriptionFactory {
 
     @Override
-    public Subscription<?> createSubscription(Object subscriber,
-                                              Method method) {
+    public <T> Subscription<T> createSubscription(Object subscriber, Method method, Class<T> eventType) {
         assureAccessible(method);
 
-        SubscriptionBuilder<Object> builder = new SubscriptionBuilder<>();
+        SubscriptionBuilder<T> builder = new SubscriptionBuilder<>();
 
         if (shouldSynchronizeListener(method)) {
             builder.decorate(ListenerDecorator.synchronizing());
         }
 
         builder.subscriber(subscriber)
-                .selector(createSelectorFromMethod(method))
+                .selector(createSelectorFromMethod(method, eventType))
                 .listener(createListener(subscriber, method));
 
         createDecorateAndSetListener(builder, subscriber, method);
@@ -61,9 +59,7 @@ enum StandardMethodBasedSubscriptionFactory implements MethodBasedSubscriptionFa
         }
     }
 
-    private KeySelector createSelectorFromMethod(Method method) {
-        Class<?> eventType = method.getParameterTypes()[0];
-
+    private <T> KeySelector createSelectorFromMethod(Method method, Class<T> eventType) {
         if (doesMethodListenerAcceptSubclassesOfTargetedEventType(method)) {
             return KeySelector.acceptsSubclasses(eventType);
         } else {
@@ -75,15 +71,13 @@ enum StandardMethodBasedSubscriptionFactory implements MethodBasedSubscriptionFa
         return method.isAnnotationPresent(AcceptSubclasses.class);
     }
 
-    private void createDecorateAndSetListener(SubscriptionBuilder<Object> builder,
-                                              Object subscriber,
-                                              Method method) {
+    private static <T> void createDecorateAndSetListener(SubscriptionBuilder<T> builder,
+                                                         Object subscriber,
+                                                         Method method) {
         builder.listener(createListener(subscriber, method));
-
-
     }
 
-    private static Listener<Object> createListener(Object subscriber, Method target) {
+    private static <T> Listener<T> createListener(Object subscriber, Method target) {
         return new MethodInvokingListener<>(subscriber, target);
     }
 

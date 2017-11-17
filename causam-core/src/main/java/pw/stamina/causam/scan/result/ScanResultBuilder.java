@@ -27,14 +27,19 @@ import pw.stamina.causam.subscribe.Subscription;
 import java.util.*;
 
 public final class ScanResultBuilder {
-    private final Set<Subscription<?>> subscriptions;
+    private Set<Subscription<?>> subscriptions;
 
-    ScanResultBuilder() {
-        subscriptions = new HashSet<>();
+    public ScanResultBuilder() {
+        subscriptions = null;
     }
 
     public ScanResultBuilder addSubscription(Subscription<?> subscription) {
         Objects.requireNonNull(subscription, "subscription");
+
+        if (!hasSubscriptions()) {
+            subscriptions = new HashSet<>();
+        }
+
         subscriptions.add(subscription);
         return this;
     }
@@ -46,6 +51,6 @@ public final class ScanResultBuilder {
     }
 
     private boolean hasSubscriptions() {
-        return !subscriptions.isEmpty();
+        return subscriptions != null;
     }
 }

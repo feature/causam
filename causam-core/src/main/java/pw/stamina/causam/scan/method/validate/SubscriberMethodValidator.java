@@ -29,6 +29,6 @@ public interface SubscriberMethodValidator {
     void validate(Method method) throws IllegalSubscriberMethodException;
 
     static SubscriberMethodValidator standard() {
-        return StandardSubscriberMethodValidator.INSTANCE;
+        return new StandardSubscriberMethodValidator();
     }
 }

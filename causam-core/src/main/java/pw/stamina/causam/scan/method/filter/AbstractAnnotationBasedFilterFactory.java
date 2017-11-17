@@ -38,7 +38,6 @@ public abstract class AbstractAnnotationBasedFilterFactory
     }
 
     @Override
-
     public Predicate<T> createFilter(Method method) {
         R annotation = method.getAnnotation(requiredAnnotation);
         return createFilter(annotation);

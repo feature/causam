@@ -22,7 +22,7 @@
 
 package pw.stamina.causam.scan;
 
-public class ScanFailedException extends RuntimeException {
+public class ScanFailedException extends Exception {
 
     public ScanFailedException(String message) {
         super(message);

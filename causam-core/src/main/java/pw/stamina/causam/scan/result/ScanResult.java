@@ -28,5 +28,7 @@ import java.util.Set;
 
 public interface ScanResult {
 
+    //TODO: Add ScanFailedExceptions
+
     Set<Subscription<?>> getSubscriptions();
 }
