@@ -35,11 +35,11 @@ public interface Publisher {
         return new ImmediatePublisher();
     }
 
-    static ExceptionHandlingPublisherDecorator exceptionHandling(Publisher delegate,
-                                                                 PublicationExceptionHandler exceptionHandler) {
-        Objects.requireNonNull(delegate, "delegate");
+    static Publisher exceptionHandling(Publisher publisher,
+                                       PublicationExceptionHandler exceptionHandler) {
+        Objects.requireNonNull(publisher, "publisher");
         Objects.requireNonNull(exceptionHandler, "exceptionHandler");
 
-        return new ExceptionHandlingPublisherDecorator(delegate, exceptionHandler);
+        return new ExceptionHandlingPublisherDecorator(publisher, exceptionHandler);
     }
 }

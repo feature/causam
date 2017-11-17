@@ -20,20 +20,20 @@
  * SOFTWARE.
  */
 
-import pw.stamina.causam.bus.EventBus;
+import pw.stamina.causam.event.EventEmitter;
 import pw.stamina.causam.scan.method.model.Subscriber;
 
 public class Test {
 
     public static void main(String[] args) {
         Test test = new Test();
-        EventBus bus = null; //TODO: Construct event bus
+        EventEmitter emitter = null;
 
         //SubscriptionRegistryFacade.simple(bus.getRegistry())
         //        .registerWith(test, MethodSubscriberScanningStrategy.standard());
 
-        bus.post("Test message 1");
-        bus.post("Test message 2");
+        emitter.emit("Test message 1");
+        emitter.emit("Test message 2");
     }
 
     @Subscriber

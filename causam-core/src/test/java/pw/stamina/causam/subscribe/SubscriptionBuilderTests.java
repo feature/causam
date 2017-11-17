@@ -22,13 +22,16 @@
 
 package pw.stamina.causam.subscribe;
 
-import org.junit.jupiter.api.BeforeAll;
+import name.falgout.jeffrey.testing.junit5.MockitoExtension;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import pw.stamina.causam.publish.listen.Listener;
 import pw.stamina.causam.select.KeySelector;
 
-public final class SubscriptionBuilderTests {
+@ExtendWith(MockitoExtension.class)
+final class SubscriptionBuilderTests {
 
     @Mock private Listener<Object> listener;
     @Mock private KeySelector keySelector;
@@ -39,8 +42,8 @@ public final class SubscriptionBuilderTests {
 
     private SubscriptionBuilder<Object> builder;
 
-    @BeforeAll
-    public void setupBuilderAndListenerDecorator() {
+    @BeforeEach
+    void setupBuilderAndListenerDecorator() {
         builder = new SubscriptionBuilder<>();
         //when(dummyListenerDecorator.getDecorationType()).thenReturn(Object.class);
         //when(dummyListenerDecorator.getDecoration()).thenReturn(new Object());
@@ -98,7 +101,7 @@ public final class SubscriptionBuilderTests {
 //    }
 
     @Test
-    public void subscriber_inputSubscriberIsNotNull_shouldNotThrowAnyException() {
+    void subscriber_inputSubscriberIsNotNull_shouldNotThrowAnyException() {
         builder.subscriber(subscriber);
     }
 
@@ -111,8 +114,8 @@ public final class SubscriptionBuilderTests {
     //}
 
     @Test
-    public void identifier_inputIdentifierIsNotNull_shouldNotThrowAnyException() {
-        builder.identifier(null);
+    void identifier_inputIdentifierIsNotNull_shouldNotThrowAnyException() {
+        builder.identifier("");
     }
 
 //    @Test
@@ -124,7 +127,7 @@ public final class SubscriptionBuilderTests {
 //    }
 
     @Test
-    public void selector_inputSelectorIsNotNull_shouldNotThrowAnyException() {
+    void selector_inputSelectorIsNotNull_shouldNotThrowAnyException() {
         builder.selector(keySelector);
     }
 
@@ -137,7 +140,7 @@ public final class SubscriptionBuilderTests {
 //    }
 
     @Test
-    public void listener_inputListenerIsNotNull_shouldNotThrowAnyException() {
+    void listener_inputListenerIsNotNull_shouldNotThrowAnyException() {
         builder.listener(listener);
     }
 }

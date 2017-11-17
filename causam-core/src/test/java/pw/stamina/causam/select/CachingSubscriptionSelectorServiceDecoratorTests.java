@@ -7,7 +7,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class CachingSubscriptionSelectorServiceDecoratorTests {
+final class CachingSubscriptionSelectorServiceDecoratorTests {
 
     @Mock
     private SubscriptionSelectorService mockedService;

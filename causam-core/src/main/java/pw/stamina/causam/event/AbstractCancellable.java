@@ -20,17 +20,37 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.bus;
+package pw.stamina.causam.event;
 
-import pw.stamina.causam.registry.SubscriptionRegistry;
+/**
+ * A simple abstract implementation of the {@link Cancellable}
+ * interface. This class provides standard cancellable
+ * functionality to any extending class.
+ */
+public abstract class AbstractCancellable implements Cancellable {
+    private boolean cancelled;
 
-import java.util.Optional;
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
-public interface EventBus {
+    @Override
+    public final boolean isCancelled() {
+        return cancelled;
+    }
 
-    Optional<String> getIdentifier();
-
-    SubscriptionRegistry getRegistry();
-
-    <T> boolean post(T event);
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec
+     * Cancels the event as if:
+     * <pre> {@code
+     * setCancelled(true);
+     *  }</pre>
+     */
+    @Override
+    public final void cancel() {
+        setCancelled(true);
+    }
 }

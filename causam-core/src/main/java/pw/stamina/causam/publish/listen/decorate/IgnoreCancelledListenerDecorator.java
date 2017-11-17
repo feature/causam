@@ -22,11 +22,10 @@
 
 package pw.stamina.causam.publish.listen.decorate;
 
-import pw.stamina.causam.Cancellable;
+import pw.stamina.causam.event.Cancellable;
 import pw.stamina.causam.publish.listen.Listener;
 
-public final class IgnoreCancelledListenerDecorator<T extends Cancellable>
-        implements ListenerDecorator<T> {
+public final class IgnoreCancelledListenerDecorator<T extends Cancellable> implements ListenerDecorator<T> {
 
     @Override
     public Listener<T> decorate(Listener<T> decorating) {

@@ -22,32 +22,33 @@
 
 package pw.stamina.causam.subscribe;
 
-import org.junit.jupiter.api.BeforeAll;
+import name.falgout.jeffrey.testing.junit5.MockitoExtension;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import pw.stamina.causam.publish.listen.Listener;
 import pw.stamina.causam.select.KeySelector;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 
-public final class ImmutableSubscriptionTests {
+@ExtendWith(MockitoExtension.class)
+final class ImmutableSubscriptionTests {
 
-    private ImmutableSubscription<?> subscription;
+    private ImmutableSubscription<Object> subscription;
 
     private final String identifier = "immutable_subscription";
-
     @Mock private Object subscriber;
     @Mock private KeySelector keySelector;
-    @Mock private Listener<?> listener;
+    @Mock private Listener<Object> listener;
 
-    @BeforeAll
-    public void setupImmutableSubscription() {
-        //TODO
-        MockitoAnnotations.initMocks(this);
-
+    @BeforeEach
+    void setupSubscription() {
         subscription = new ImmutableSubscription<>(
                 subscriber,
                 identifier,
@@ -56,23 +57,34 @@ public final class ImmutableSubscriptionTests {
     }
 
     @Test
-    public void getSubscriber_shouldReturnSameSubscriberAsSpecifiedInConstructor() {
-        assertSame(subscription.getSubscriber(), subscriber);
+    void getSubscriber_shouldReturnSubscriberAsSpecifiedInConstructor() {
+        assertSame(subscriber, subscription.getSubscriber());
     }
 
     @Test
-    public void getIdentifier_shouldReturnSameIdentifierAsSpecifiedInConstructor() {
-        assertSame(subscription.getIdentifier(), identifier);
+    void getIdentifier_shouldReturnIdentifierAsSpecifiedInConstructor() {
+        Optional<String> subscriptionIdentifier = subscription.getIdentifier();
+
+        assertTrue(subscriptionIdentifier.isPresent());
+        assertSame(identifier, subscriptionIdentifier.get());
     }
 
     @Test
-    public void getSelector_shouldReturnSameSelectorAsSpecifiedInConstructor() {
-        assertSame(subscription.getKeySelector(), keySelector);
+    void getSelector_shouldReturnSelectorAsSpecifiedInConstructor() {
+        assertSame(keySelector, subscription.getKeySelector());
     }
 
     @Test
-    public void publish_eventParameterIsNull_shouldListenerBeCalledExactlyOnceWithEventAsNull() {
+    void publish_givenInputIsNull_shouldListenerBeCalledOnceWithNull() {
         subscription.publish(null);
         verify(listener).publish(isNull());
+    }
+
+    @Test
+    void publish_givenNonNullInput_shouldListenerBeCalledOnceWithEvent() {
+        Object event = new Object();
+
+        subscription.publish(event);
+        verify(listener).publish(event);
     }
 }

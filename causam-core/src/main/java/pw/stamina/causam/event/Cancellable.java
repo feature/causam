@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam;
+package pw.stamina.causam.event;
 
 import pw.stamina.causam.publish.listen.Listener;
 

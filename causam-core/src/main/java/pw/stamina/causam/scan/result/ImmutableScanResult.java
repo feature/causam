@@ -31,11 +31,11 @@ final class ImmutableScanResult implements ScanResult {
     private final Set<Subscription<?>> subscriptions;
 
     ImmutableScanResult(Set<Subscription<?>> subscriptions) {
-        this.subscriptions = subscriptions;
+        this.subscriptions = Collections.unmodifiableSet(subscriptions);
     }
 
     @Override
     public Set<Subscription<?>> getSubscriptions() {
-        return Collections.unmodifiableSet(subscriptions);
+        return subscriptions;
     }
 }

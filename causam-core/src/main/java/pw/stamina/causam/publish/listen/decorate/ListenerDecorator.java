@@ -24,7 +24,6 @@ package pw.stamina.causam.publish.listen.decorate;
 
 import pw.stamina.causam.publish.listen.Listener;
 
-//TODO: R must be an interface
 public interface ListenerDecorator<T> {
 
     Listener<T> decorate(Listener<T> decorating);
