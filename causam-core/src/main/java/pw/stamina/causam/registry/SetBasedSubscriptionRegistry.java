@@ -11,12 +11,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public final class SetBasedSubscription extends AbstractSubscriptionRegistry {
+public final class SetBasedSubscriptionRegistry extends AbstractSubscriptionRegistry {
     private final Set<Subscription<?>> subscriptions;
 
     @Inject
-    SetBasedSubscription(SubscriptionSelectorService selectorService,
-                         Set<Subscription<?>> subscriptions) {
+    SetBasedSubscriptionRegistry(SubscriptionSelectorService selectorService,
+                                 Set<Subscription<?>> subscriptions) {
         super(selectorService);
         this.subscriptions = subscriptions;
     }
@@ -51,10 +51,10 @@ public final class SetBasedSubscription extends AbstractSubscriptionRegistry {
     }
 
     public static SubscriptionRegistry copyOnWrite(SubscriptionSelectorService selectorService) {
-        return new SetBasedSubscription(selectorService, new CopyOnWriteArraySet<>());
+        return new SetBasedSubscriptionRegistry(selectorService, new CopyOnWriteArraySet<>());
     }
 
     public static SubscriptionRegistry hash(SubscriptionSelectorService selectorService) {
-        return new SetBasedSubscription(selectorService, new HashSet<>());
+        return new SetBasedSubscriptionRegistry(selectorService, new HashSet<>());
     }
 }
