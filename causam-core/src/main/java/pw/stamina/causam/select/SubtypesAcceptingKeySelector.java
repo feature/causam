@@ -22,10 +22,10 @@
 
 package pw.stamina.causam.select;
 
-final class SubclassAcceptingKeySelector implements KeySelector {
+final class SubtypesAcceptingKeySelector implements KeySelector {
     private final Class<?> superClass;
 
-    SubclassAcceptingKeySelector(Class<?> superClass) {
+    SubtypesAcceptingKeySelector(Class<?> superClass) {
         this.superClass = superClass;
     }
 

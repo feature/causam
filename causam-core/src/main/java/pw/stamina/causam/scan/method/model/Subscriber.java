@@ -34,7 +34,7 @@ public @interface Subscriber {
 
     boolean synchronize() default false;
 
-    boolean acceptSubclasses() default false;
+    boolean rejectSubtypes() default false;
 
     boolean ignoreCancelled() default false;
 }

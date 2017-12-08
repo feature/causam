@@ -24,7 +24,7 @@ package pw.stamina.causam.scan.method.factory;
 
 import pw.stamina.causam.publish.listen.Listener;
 import pw.stamina.causam.publish.listen.decorate.ListenerDecorator;
-import pw.stamina.causam.scan.method.model.AcceptSubclasses;
+import pw.stamina.causam.scan.method.model.RejectSubtypes;
 import pw.stamina.causam.scan.method.model.Synchronize;
 import pw.stamina.causam.select.KeySelector;
 import pw.stamina.causam.subscribe.Subscription;
@@ -60,15 +60,15 @@ final class StandardMethodBasedSubscriptionFactory implements MethodBasedSubscri
     }
 
     private <T> KeySelector createSelectorFromMethod(Method method, Class<T> eventType) {
-        if (doesMethodListenerAcceptSubclassesOfTargetedEventType(method)) {
-            return KeySelector.acceptsSubclasses(eventType);
-        } else {
+        if (doesListenerRejectSubtypes(method)) {
             return KeySelector.exact(eventType);
+        } else {
+            return KeySelector.acceptsSubtypes(eventType);
         }
     }
 
-    private boolean doesMethodListenerAcceptSubclassesOfTargetedEventType(Method method) {
-        return method.isAnnotationPresent(AcceptSubclasses.class);
+    private boolean doesListenerRejectSubtypes(Method method) {
+        return method.isAnnotationPresent(RejectSubtypes.class);
     }
 
     private static <T> void createDecorateAndSetListener(SubscriptionBuilder<T> builder,

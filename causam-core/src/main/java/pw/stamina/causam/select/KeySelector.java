@@ -33,8 +33,8 @@ public interface KeySelector {
         return new ExactMatchingKeySelector(expectedKey);
     }
 
-    static SubclassAcceptingKeySelector acceptsSubclasses(Class<?> superClass) {
+    static SubtypesAcceptingKeySelector acceptsSubtypes(Class<?> superClass) {
         Objects.requireNonNull(superClass, "superClass");
-        return new SubclassAcceptingKeySelector(superClass);
+        return new SubtypesAcceptingKeySelector(superClass);
     }
 }
