@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public final class SetBasedSubscriptionRegistry extends AbstractSubscriptionRegistry {
@@ -25,28 +24,28 @@ public final class SetBasedSubscriptionRegistry extends AbstractSubscriptionRegi
     @Override
     public boolean register(Subscription<?> subscription) {
         boolean registered = subscriptions.add(subscription);
-        invalidateCache(invalidator -> invalidator.invalidateFor(subscription));
+        invalidateCache(invalidator -> invalidator.invalidate(subscription));
         return registered;
     }
 
     @Override
     public boolean registerAll(Collection<Subscription<?>> subscriptions) {
         boolean registeredAny = this.subscriptions.addAll(subscriptions);
-        invalidateCache(invalidator -> invalidator.invalidateForAll(subscriptions));
+        invalidateCache(invalidator -> invalidator.invalidateAll(subscriptions));
         return registeredAny;
     }
 
     @Override
     public boolean unregister(Subscription<?> subscription) {
         boolean unregistered = subscriptions.remove(subscription);
-        invalidateCache(invalidator -> invalidator.invalidateFor(subscription));
+        invalidateCache(invalidator -> invalidator.invalidate(subscription));
         return unregistered;
     }
 
     @Override
-    public boolean unregisterIf(Predicate<Subscription<?>> filter) {
-        boolean unregisteredAny = subscriptions.removeIf(filter);
-        invalidateCache(invalidator -> invalidator.invalidateIf(filter));
+    public boolean unregisterAll(Object subscriber) {
+        boolean unregisteredAny = subscriptions.removeIf(subscription -> subscription.getSubscriber() == subscriber);
+        invalidateCache(invalidator -> invalidator.invalidate(subscriber));
         return unregisteredAny;
     }
 

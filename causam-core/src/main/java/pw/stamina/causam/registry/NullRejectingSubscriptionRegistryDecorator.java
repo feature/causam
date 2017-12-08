@@ -28,7 +28,6 @@ import pw.stamina.causam.subscribe.Subscription;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public final class NullRejectingSubscriptionRegistryDecorator implements SubscriptionRegistry {
@@ -71,22 +70,9 @@ public final class NullRejectingSubscriptionRegistryDecorator implements Subscri
     }
 
     @Override
-    public boolean unregisterFor(Object subscriber) {
+    public boolean unregisterAll(Object subscriber) {
         Objects.requireNonNull(subscriber, "subscriber");
-        return registry.unregisterFor(subscriber);
-    }
-
-    @Override
-    public boolean unregisterIf(Predicate<Subscription<?>> filter) {
-        Objects.requireNonNull(filter, "filter");
-        return registry.unregisterIf(filter);
-    }
-
-    @Override
-    public boolean unregisterForIf(Object subscriber, Predicate<Subscription<?>> filter) {
-        Objects.requireNonNull(subscriber, "subscriber");
-        Objects.requireNonNull(filter, "filter");
-        return registry.unregisterForIf(subscriber, filter);
+        return registry.unregisterAll(subscriber);
     }
 
     @Override
@@ -102,7 +88,7 @@ public final class NullRejectingSubscriptionRegistryDecorator implements Subscri
 
     @Override
     public <T> Collection<Subscription<T>> selectSubscriptions(Class<T> key) {
-        // Not validate for optimization reasons
+        // We don't check if the key is null here for small optimization reasons
         return registry.selectSubscriptions(key);
     }
 }

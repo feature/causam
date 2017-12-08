@@ -27,7 +27,6 @@ import pw.stamina.causam.subscribe.Subscription;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface SubscriptionRegistry {
@@ -40,11 +39,7 @@ public interface SubscriptionRegistry {
 
     boolean unregister(Subscription<?> subscription);
 
-    boolean unregisterFor(Object subscriber);
-
-    boolean unregisterIf(Predicate<Subscription<?>> filter);
-
-    boolean unregisterForIf(Object subscriber, Predicate<Subscription<?>> filter);
+    boolean unregisterAll(Object subscriber);
 
     Stream<Subscription<?>> findSubscriptions(Object subscriber);
 

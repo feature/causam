@@ -69,20 +69,27 @@ public final class CachingSubscriptionSelectorServiceDecorator implements Subscr
     private final class SubscriptionCacheInvalidatorImpl implements SubscriptionCacheInvalidator {
 
         @Override
-        public void invalidateFor(Subscription<?> subscription) {
-            cachedSubscriptions.values().removeIf(contains(subscription));
+        public void invalidate(Subscription<?> subscription) {
+            valuesRemoveIf(contains(subscription));
         }
 
         @Override
-        public void invalidateForAll(Collection<Subscription<?>> subscriptions) {
+        public void invalidateAll(Collection<Subscription<?>> subscriptions) {
             cachedSubscriptions.keySet().removeIf(canAnySubscriptionSelect(subscriptions));
         }
 
         @Override
-        public void invalidateIf(Predicate<Subscription<?>> filter) {
-            cachedSubscriptions.values().removeIf(anyMatch(filter));
+        public void invalidate(Object subscriber) {
+            valuesRemoveIf(anyMatch(isSubscriberSameAs(subscriber)));
         }
 
+        private void valuesRemoveIf(Predicate<Collection<Subscription<?>>> filter) {
+            cachedSubscriptions.values().removeIf(filter);
+        }
+    }
+
+    private Predicate<Subscription<?>> isSubscriberSameAs(Object subscriber) {
+        return subscription -> subscription.getSubscriber() == subscriber;
     }
 
     private static Predicate<Collection<Subscription<?>>> contains(Subscription<?> subscription) {

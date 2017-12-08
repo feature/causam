@@ -30,16 +30,6 @@ public abstract class AbstractSubscriptionRegistry implements SubscriptionRegist
     }
 
     @Override
-    public boolean unregisterFor(Object subscriber) {
-        return unregisterIf(doesSubscriberMatch(subscriber));
-    }
-
-    @Override
-    public boolean unregisterForIf(Object subscriber, Predicate<Subscription<?>> filter) {
-        return unregisterIf(doesSubscriberMatch(subscriber).and(filter));
-    }
-
-    @Override
     public Stream<Subscription<?>> findSubscriptions(Object subscriber) {
         return findAllSubscriptions().filter(doesSubscriberMatch(subscriber));
     }

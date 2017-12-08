@@ -25,13 +25,12 @@ package pw.stamina.causam.select;
 import pw.stamina.causam.subscribe.Subscription;
 
 import java.util.Collection;
-import java.util.function.Predicate;
 
 public interface SubscriptionCacheInvalidator {
 
-    void invalidateFor(Subscription<?> subscription);
+    void invalidate(Subscription<?> subscription);
 
-    void invalidateForAll(Collection<Subscription<?>> subscriptions);
+    void invalidateAll(Collection<Subscription<?>> subscriptions);
 
-    void invalidateIf(Predicate<Subscription<?>> filter);
+    void invalidate(Object subscriber);
 }
