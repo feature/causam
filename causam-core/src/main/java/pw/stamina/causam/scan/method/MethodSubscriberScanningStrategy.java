@@ -62,7 +62,7 @@ public final class MethodSubscriberScanningStrategy implements SubscriberScannin
 
         ScanResultBuilder resultBuilder = new ScanResultBuilder();
         for (Method method : methods) {
-            if (isSubscriberMethod(method)) {
+            if (!isSubscriberMethod(method)) {
                 continue;
             }
 

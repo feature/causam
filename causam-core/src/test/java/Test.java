@@ -21,23 +21,36 @@
  */
 
 import pw.stamina.causam.event.EventEmitter;
+import pw.stamina.causam.publish.Publisher;
+import pw.stamina.causam.registry.SetBasedSubscriptionRegistry;
+import pw.stamina.causam.registry.SubscriptionRegistry;
+import pw.stamina.causam.scan.method.MethodSubscriberScanningStrategy;
+import pw.stamina.causam.scan.method.model.AcceptSubclasses;
 import pw.stamina.causam.scan.method.model.Subscriber;
+import pw.stamina.causam.select.CachingSubscriptionSelectorServiceDecorator;
+import pw.stamina.causam.select.SubscriptionSelectorService;
 
-public class Test {
+public final class Test {
 
     public static void main(String[] args) {
-        Test test = new Test();
-        EventEmitter emitter = null;
+        SubscriptionSelectorService selectorService =
+                CachingSubscriptionSelectorServiceDecorator.standard(SubscriptionSelectorService.simple());
+        SubscriptionRegistry registry = SetBasedSubscriptionRegistry.concurrentHash(selectorService);
 
-        //SubscriptionRegistryFacade.simple(bus.getRegistry())
-        //        .registerWith(test, MethodSubscriberScanningStrategy.standard());
+        Publisher publisher = Publisher.immediate();
+        EventEmitter emitter = EventEmitter.standard(registry, publisher);
+
+        emitter.emit("Test message 1");
+        Test object = new Test();
+        registry.registerWith(object, MethodSubscriberScanningStrategy.standard());
 
         emitter.emit("Test message 1");
         emitter.emit("Test message 2");
     }
 
     @Subscriber
-    private void printString(String message) {
+    @AcceptSubclasses
+    private void printString(Object message) {
         System.out.println(message);
     }
 }

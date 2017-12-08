@@ -13,6 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 final class PublisherTests {
 
+    private @Mock Publisher publisher;
+    private @Mock PublicationExceptionHandler exceptionHandler;
+
     @Test
     @DisplayName("Publisher.immediate() instanceof ImmediatePublisher")
     void immediate_shouldReturnInstanceOfImmediatePublisher() {
@@ -22,14 +25,14 @@ final class PublisherTests {
 
     @Test
     @DisplayName("Publisher.exceptionHandling(null, null) throws NullPointerException")
-    void exceptionHandling(@Mock Publisher publisher, @Mock PublicationExceptionHandler exceptionHandler) {
+    void exceptionHandling() {
         assertThrows(NullPointerException.class, () -> Publisher.exceptionHandling(null, exceptionHandler));
         assertThrows(NullPointerException.class, () -> Publisher.exceptionHandling(publisher, null));
     }
 
     @Test
     @DisplayName("Publisher.exceptionHandling(publisher, exceptionHandler) instanceof ExceptionHandlingPublisherDecorator")
-    void exceptionHandling_(@Mock Publisher publisher, @Mock PublicationExceptionHandler exceptionHandler) {
+    void exceptionHandling_() {
         Publisher publisherDecorator = Publisher.exceptionHandling(publisher, exceptionHandler);
         assertTrue(publisherDecorator instanceof ExceptionHandlingPublisherDecorator);
     }

@@ -12,6 +12,7 @@ public interface EventEmitter {
     static EventEmitter standard(SubscriptionRegistry registry, Publisher publisher) {
         Objects.requireNonNull(registry, "registry");
         Objects.requireNonNull(publisher, "publisher");
+
         return new StandardEventEmitter(registry, publisher);
     }
 }

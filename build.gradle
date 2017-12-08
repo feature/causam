@@ -13,9 +13,11 @@ buildscript {
 }
 
 group 'pw.stamina.causam'
+version = '1.0.0-SNAPSHOT'
 
 subprojects {
     group = rootProject.group
+    version = rootProject.version
 
     apply plugin: 'java-library'
     apply plugin: 'maven'
@@ -39,8 +41,8 @@ subprojects {
     dependencies {
         api 'javax.inject:javax.inject:1'
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
-        testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
         testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+        testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
         testImplementation "org.mockito:mockito-core:$mockito_version"
 
         //TODO: Temporary
@@ -50,4 +52,3 @@ subprojects {
         testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
     }
 }
-

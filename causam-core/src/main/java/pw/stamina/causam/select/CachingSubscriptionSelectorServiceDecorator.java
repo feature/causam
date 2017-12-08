@@ -75,7 +75,7 @@ public final class CachingSubscriptionSelectorServiceDecorator implements Subscr
 
         @Override
         public void invalidateForAll(Collection<Subscription<?>> subscriptions) {
-            cachedSubscriptions.values().removeIf(containsAny(subscriptions));
+            cachedSubscriptions.keySet().removeIf(canAnySubscriptionSelect(subscriptions));
         }
 
         @Override
@@ -89,8 +89,10 @@ public final class CachingSubscriptionSelectorServiceDecorator implements Subscr
         return subscriptions -> subscriptions.contains(subscription);
     }
 
-    private static Predicate<Collection<Subscription<?>>> containsAny(Collection<Subscription<?>> subscriptions) {
-        return cachedSubscriptionsValue -> !Collections.disjoint(cachedSubscriptionsValue, subscriptions);
+    private static Predicate<Class<?>> canAnySubscriptionSelect(Collection<Subscription<?>> subscriptions) {
+        return key -> subscriptions.stream()
+                .map(Subscription::getKeySelector)
+                .anyMatch(selector -> selector.canSelect(key));
     }
 
     private static Predicate<Collection<Subscription<?>>> anyMatch(Predicate<Subscription<?>> filter) {

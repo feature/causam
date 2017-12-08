@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -23,26 +24,30 @@ public final class SetBasedSubscriptionRegistry extends AbstractSubscriptionRegi
 
     @Override
     public boolean register(Subscription<?> subscription) {
+        boolean registered = subscriptions.add(subscription);
         invalidateCache(invalidator -> invalidator.invalidateFor(subscription));
-        return subscriptions.add(subscription);
+        return registered;
     }
 
     @Override
     public boolean registerAll(Collection<Subscription<?>> subscriptions) {
+        boolean registeredAny = this.subscriptions.addAll(subscriptions);
         invalidateCache(invalidator -> invalidator.invalidateForAll(subscriptions));
-        return this.subscriptions.addAll(subscriptions);
+        return registeredAny;
     }
 
     @Override
     public boolean unregister(Subscription<?> subscription) {
+        boolean unregistered = subscriptions.remove(subscription);
         invalidateCache(invalidator -> invalidator.invalidateFor(subscription));
-        return subscriptions.remove(subscription);
+        return unregistered;
     }
 
     @Override
     public boolean unregisterIf(Predicate<Subscription<?>> filter) {
+        boolean unregisteredAny = subscriptions.removeIf(filter);
         invalidateCache(invalidator -> invalidator.invalidateIf(filter));
-        return subscriptions.removeIf(filter);
+        return unregisteredAny;
     }
 
     @Override
@@ -52,6 +57,10 @@ public final class SetBasedSubscriptionRegistry extends AbstractSubscriptionRegi
 
     public static SubscriptionRegistry copyOnWrite(SubscriptionSelectorService selectorService) {
         return new SetBasedSubscriptionRegistry(selectorService, new CopyOnWriteArraySet<>());
+    }
+
+    public static SubscriptionRegistry concurrentHash(SubscriptionSelectorService selectorService) {
+        return new SetBasedSubscriptionRegistry(selectorService, ConcurrentHashMap.newKeySet());
     }
 
     public static SubscriptionRegistry hash(SubscriptionSelectorService selectorService) {

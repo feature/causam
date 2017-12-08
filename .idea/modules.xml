@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/causam.iml" filepath="$PROJECT_DIR$/.idea/modules/causam.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/causam-core.iml" filepath="$PROJECT_DIR$/.idea/modules/causam-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/causam-guice.iml" filepath="$PROJECT_DIR$/.idea/modules/causam-guice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/causam-core/causam-core.iml" filepath="$PROJECT_DIR$/.idea/modules/causam-core/causam-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/causam-guice/causam-guice.iml" filepath="$PROJECT_DIR$/.idea/modules/causam-guice/causam-guice.iml" />
     </modules>
   </component>
 </project>
