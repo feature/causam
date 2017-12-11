@@ -35,6 +35,8 @@ import java.util.Map;
 //TODO: Replace with a non-reflection based implementation instead?
 public final class SubscriptionProxyFactory {
 
+    private SubscriptionProxyFactory() {}
+
     public static <T> Subscription<T> createSubscriptionProxy(
             Subscription<T> subscription,
             ListenerDecoratorContainer<T> decorators) {

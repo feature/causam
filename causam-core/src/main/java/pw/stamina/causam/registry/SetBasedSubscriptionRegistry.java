@@ -12,11 +12,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Stream;
 
 public final class SetBasedSubscriptionRegistry extends AbstractSubscriptionRegistry {
-    private final Set<Subscription<?>> subscriptions;
+    private final Set<Subscription> subscriptions;
 
     @Inject
     SetBasedSubscriptionRegistry(SubscriptionSelectorService selectorService,
-                                 Set<Subscription<?>> subscriptions) {
+                                 Set<Subscription> subscriptions) {
         super(selectorService);
         this.subscriptions = subscriptions;
     }
@@ -29,7 +29,7 @@ public final class SetBasedSubscriptionRegistry extends AbstractSubscriptionRegi
     }
 
     @Override
-    public boolean registerAll(Collection<Subscription<?>> subscriptions) {
+    public boolean registerAll(Collection<Subscription> subscriptions) {
         boolean registeredAny = this.subscriptions.addAll(subscriptions);
         invalidateCache(invalidator -> invalidator.invalidateAll(subscriptions));
         return registeredAny;
@@ -50,7 +50,7 @@ public final class SetBasedSubscriptionRegistry extends AbstractSubscriptionRegi
     }
 
     @Override
-    public Stream<Subscription<?>> findAllSubscriptions() {
+    public Stream<Subscription> findAllSubscriptions() {
         return subscriptions.stream();
     }
 

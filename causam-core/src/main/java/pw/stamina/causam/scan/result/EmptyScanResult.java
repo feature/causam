@@ -31,7 +31,7 @@ enum EmptyScanResult implements ScanResult {
     INSTANCE;
 
     @Override
-    public Set<Subscription<?>> getSubscriptions() {
+    public Set<Subscription> getSubscriptions() {
         return Collections.emptySet();
     }
 }

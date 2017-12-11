@@ -33,7 +33,7 @@ public interface SubscriptionRegistry {
 
     boolean register(Subscription<?> subscription);
 
-    boolean registerAll(Collection<Subscription<?>> subscriptions);
+    boolean registerAll(Collection<Subscription> subscriptions);
 
     boolean registerWith(Object subscriber, SubscriberScanningStrategy strategy);
 
@@ -41,9 +41,9 @@ public interface SubscriptionRegistry {
 
     boolean unregisterAll(Object subscriber);
 
-    Stream<Subscription<?>> findSubscriptions(Object subscriber);
+    Stream<Subscription> findSubscriptions(Object subscriber);
 
-    Stream<Subscription<?>> findAllSubscriptions();
+    Stream<Subscription> findAllSubscriptions();
 
     <T> Collection<Subscription<T>> selectSubscriptions(Class<T> key);
 

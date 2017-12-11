@@ -35,7 +35,7 @@ final class SynchronizingListenerDecorator<T> implements ListenerDecorator<T> {
     @Override
     public Listener<T> decorate(Listener<T> decorating) {
         return event -> {
-            synchronized (decorating) {
+            synchronized (this) {
                 decorating.publish(event);
             }
         };

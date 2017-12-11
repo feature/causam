@@ -73,14 +73,14 @@ public final class SubscriptionBuilder<T> {
     public Subscription<T> build() {
         validateBuilderIsComplete();
 
-        Listener<T> listener = decorators.applyDecorationsToListener(this.listener);
+        Listener<T> decoratedListener = decorators.applyDecorationsToListener(listener);
 
         Subscription<T> subscription =
                 new ImmutableSubscription<>(
                         subscriber,
                         identifier,
                         keySelector,
-                        listener);
+                        decoratedListener);
 
         if (decorators.shouldCreateProxy()) {
             return SubscriptionProxyFactory.createSubscriptionProxy(subscription, decorators);

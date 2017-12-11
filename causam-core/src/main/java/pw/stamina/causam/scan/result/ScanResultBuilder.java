@@ -27,7 +27,7 @@ import pw.stamina.causam.subscribe.Subscription;
 import java.util.*;
 
 public final class ScanResultBuilder {
-    private Set<Subscription<?>> subscriptions;
+    private Set<Subscription> subscriptions;
 
     public ScanResultBuilder() {
         subscriptions = null;

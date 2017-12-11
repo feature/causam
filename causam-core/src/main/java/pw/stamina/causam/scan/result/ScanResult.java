@@ -30,5 +30,5 @@ public interface ScanResult {
 
     //TODO: Add ScanFailedExceptions
 
-    Set<Subscription<?>> getSubscriptions();
+    Set<Subscription> getSubscriptions();
 }

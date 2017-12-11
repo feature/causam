@@ -35,11 +35,11 @@ import java.util.stream.Stream;
 public final class CachingSubscriptionSelectorServiceDecorator implements SubscriptionSelectorService {
     private final SubscriptionSelectorService backingSelectorService;
     private final SubscriptionCacheInvalidatorImpl cacheInvalidator;
-    private final Map<Class<?>, Collection<Subscription<?>>> cachedSubscriptions;
+    private final Map<Class<?>, Collection<Subscription>> cachedSubscriptions;
 
     @Inject
     CachingSubscriptionSelectorServiceDecorator(SubscriptionSelectorService backingSelectorService,
-                                                Map<Class<?>, Collection<Subscription<?>>> cachedSubscriptions) {
+                                                Map<Class<?>, Collection<Subscription>> cachedSubscriptions) {
         this.backingSelectorService = backingSelectorService;
         this.cachedSubscriptions = cachedSubscriptions;
         this.cacheInvalidator = new SubscriptionCacheInvalidatorImpl();
@@ -47,12 +47,12 @@ public final class CachingSubscriptionSelectorServiceDecorator implements Subscr
 
     @Override
     public <T> Collection<Subscription<T>> selectSubscriptions(
-            Class<T> key, Supplier<Stream<Subscription<?>>> subscriptions) {
+            Class<T> key, Supplier<Stream<Subscription>> subscriptions) {
         return uncheckedCast(cachedSubscriptions.computeIfAbsent(key, selectSubscriptions(subscriptions)));
     }
 
-    private Function<Class<?>, Collection<Subscription<?>>> selectSubscriptions(
-            Supplier<Stream<Subscription<?>>> subscriptions) {
+    private Function<Class<?>, Collection<Subscription>> selectSubscriptions(
+            Supplier<Stream<Subscription>> subscriptions) {
         return key -> uncheckedCast(backingSelectorService.selectSubscriptions(key, subscriptions));
     }
 
@@ -66,6 +66,14 @@ public final class CachingSubscriptionSelectorServiceDecorator implements Subscr
         return Optional.of(cacheInvalidator);
     }
 
+    public static SubscriptionSelectorService concurrent(SubscriptionSelectorService backingSelectorService) {
+        return new CachingSubscriptionSelectorServiceDecorator(backingSelectorService, new ConcurrentHashMap<>());
+    }
+
+    public static SubscriptionSelectorService standard(SubscriptionSelectorService backingSelectorService) {
+        return new CachingSubscriptionSelectorServiceDecorator(backingSelectorService, new HashMap<>());
+    }
+
     private final class SubscriptionCacheInvalidatorImpl implements SubscriptionCacheInvalidator {
 
         @Override
@@ -74,7 +82,7 @@ public final class CachingSubscriptionSelectorServiceDecorator implements Subscr
         }
 
         @Override
-        public void invalidateAll(Collection<Subscription<?>> subscriptions) {
+        public void invalidateAll(Collection<Subscription> subscriptions) {
             cachedSubscriptions.keySet().removeIf(canAnySubscriptionSelect(subscriptions));
         }
 
@@ -83,34 +91,26 @@ public final class CachingSubscriptionSelectorServiceDecorator implements Subscr
             valuesRemoveIf(anyMatch(isSubscriberSameAs(subscriber)));
         }
 
-        private void valuesRemoveIf(Predicate<Collection<Subscription<?>>> filter) {
+        private void valuesRemoveIf(Predicate<Collection<Subscription>> filter) {
             cachedSubscriptions.values().removeIf(filter);
         }
-    }
 
-    private Predicate<Subscription<?>> isSubscriberSameAs(Object subscriber) {
-        return subscription -> subscription.getSubscriber() == subscriber;
-    }
+        private Predicate<Subscription> isSubscriberSameAs(Object subscriber) {
+            return subscription -> subscription.getSubscriber() == subscriber;
+        }
 
-    private static Predicate<Collection<Subscription<?>>> contains(Subscription<?> subscription) {
-        return subscriptions -> subscriptions.contains(subscription);
-    }
+        private Predicate<Collection<Subscription>> contains(Subscription<?> subscription) {
+            return subscriptions -> subscriptions.contains(subscription);
+        }
 
-    private static Predicate<Class<?>> canAnySubscriptionSelect(Collection<Subscription<?>> subscriptions) {
-        return key -> subscriptions.stream()
-                .map(Subscription::getKeySelector)
-                .anyMatch(selector -> selector.canSelect(key));
-    }
+        private Predicate<Class<?>> canAnySubscriptionSelect(Collection<Subscription> subscriptions) {
+            return key -> subscriptions.stream()
+                    .map(Subscription::getKeySelector)
+                    .anyMatch(selector -> selector.canSelect(key));
+        }
 
-    private static Predicate<Collection<Subscription<?>>> anyMatch(Predicate<Subscription<?>> filter) {
-        return subscriptions -> subscriptions.stream().anyMatch(filter);
-    }
-
-    public static SubscriptionSelectorService concurrent(SubscriptionSelectorService backingSelectorService) {
-        return new CachingSubscriptionSelectorServiceDecorator(backingSelectorService, new ConcurrentHashMap<>());
-    }
-
-    public static SubscriptionSelectorService standard(SubscriptionSelectorService backingSelectorService) {
-        return new CachingSubscriptionSelectorServiceDecorator(backingSelectorService, new HashMap<>());
+        private Predicate<Collection<Subscription>> anyMatch(Predicate<Subscription> filter) {
+            return subscriptions -> subscriptions.stream().anyMatch(filter);
+        }
     }
 }

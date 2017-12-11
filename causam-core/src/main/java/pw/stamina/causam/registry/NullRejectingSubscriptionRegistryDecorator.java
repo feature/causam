@@ -45,12 +45,12 @@ public final class NullRejectingSubscriptionRegistryDecorator implements Subscri
     }
 
     @Override
-    public boolean registerAll(Collection<Subscription<?>> subscriptions) {
+    public boolean registerAll(Collection<Subscription> subscriptions) {
         validateSubscriptionsInput(subscriptions);
         return registry.registerAll(subscriptions);
     }
 
-    private void validateSubscriptionsInput(Collection<Subscription<?>> subscriptions) {
+    private void validateSubscriptionsInput(Collection<Subscription> subscriptions) {
         Objects.requireNonNull(subscriptions, "subscriptions");
         subscriptions.forEach(Objects::requireNonNull);
     }
@@ -76,13 +76,13 @@ public final class NullRejectingSubscriptionRegistryDecorator implements Subscri
     }
 
     @Override
-    public Stream<Subscription<?>> findSubscriptions(Object subscriber) {
+    public Stream<Subscription> findSubscriptions(Object subscriber) {
         Objects.requireNonNull(subscriber, "subscriber");
         return registry.findSubscriptions(subscriber);
     }
 
     @Override
-    public Stream<Subscription<?>> findAllSubscriptions() {
+    public Stream<Subscription> findAllSubscriptions() {
         return registry.findAllSubscriptions();
     }
 

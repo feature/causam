@@ -39,7 +39,7 @@ public final class SimpleSubscriptionSelectorService implements SubscriptionSele
 
     @Override
     public <T> Collection<Subscription<T>> selectSubscriptions(
-            Class<T> key, Supplier<Stream<Subscription<?>>> subscriptions) {
+            Class<T> key, Supplier<Stream<Subscription>> subscriptions) {
 
         List<?> selected = subscriptions.get()
                 .filter(canSubscriberSelect(key))
@@ -48,7 +48,7 @@ public final class SimpleSubscriptionSelectorService implements SubscriptionSele
         return castSelected(selected);
     }
 
-    private Predicate<Subscription<?>> canSubscriberSelect(Class<?> key) {
+    private Predicate<Subscription> canSubscriberSelect(Class<?> key) {
         return subscription -> subscription.getKeySelector().canSelect(key);
     }
 

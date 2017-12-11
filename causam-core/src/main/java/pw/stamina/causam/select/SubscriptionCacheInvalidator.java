@@ -30,7 +30,7 @@ public interface SubscriptionCacheInvalidator {
 
     void invalidate(Subscription<?> subscription);
 
-    void invalidateAll(Collection<Subscription<?>> subscriptions);
+    void invalidateAll(Collection<Subscription> subscriptions);
 
     void invalidate(Object subscriber);
 }

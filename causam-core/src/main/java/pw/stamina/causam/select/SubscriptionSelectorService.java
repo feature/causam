@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 public interface SubscriptionSelectorService {
 
     <T> Collection<Subscription<T>> selectSubscriptions(
-            Class<T> key, Supplier<Stream<Subscription<?>>> subscriptions);
+            Class<T> key, Supplier<Stream<Subscription>> subscriptions);
 
     default Optional<SubscriptionCacheInvalidator> getCacheInvalidator() {
         return Optional.empty();

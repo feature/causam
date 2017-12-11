@@ -28,14 +28,14 @@ import java.util.Collections;
 import java.util.Set;
 
 final class ImmutableScanResult implements ScanResult {
-    private final Set<Subscription<?>> subscriptions;
+    private final Set<Subscription> subscriptions;
 
-    ImmutableScanResult(Set<Subscription<?>> subscriptions) {
+    ImmutableScanResult(Set<Subscription> subscriptions) {
         this.subscriptions = Collections.unmodifiableSet(subscriptions);
     }
 
     @Override
-    public Set<Subscription<?>> getSubscriptions() {
+    public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }
 }
