@@ -9,6 +9,8 @@ public interface EventEmitter {
 
     <T> boolean emit(T event);
 
+    <T extends Cancellable> boolean emitCancellable(T event);
+
     static EventEmitter standard(SubscriptionRegistry registry, Publisher publisher) {
         Objects.requireNonNull(registry, "registry");
         Objects.requireNonNull(publisher, "publisher");

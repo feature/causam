@@ -25,11 +25,11 @@ package pw.stamina.causam.publish.listen.decorate.filter;
 import pw.stamina.causam.publish.listen.Listener;
 import pw.stamina.causam.publish.listen.decorate.InstanceAssociatedListenerDecorator;
 
-public final class FilterableListenerDecoratorInstanceAssociated<T>
+public final class FilterableListenerDecorator<T>
         implements InstanceAssociatedListenerDecorator<T, Filterable> {
     private final Filterable<T> filterable;
 
-    private FilterableListenerDecoratorInstanceAssociated(Filterable<T> filterable) {
+    private FilterableListenerDecorator(Filterable<T> filterable) {
         this.filterable = filterable;
     }
 
@@ -54,7 +54,7 @@ public final class FilterableListenerDecoratorInstanceAssociated<T>
         return filterable;
     }
 
-    public static <T> FilterableListenerDecoratorInstanceAssociated<T> from(Filterable<T> filterable) {
-        return new FilterableListenerDecoratorInstanceAssociated<>(filterable);
+    public static <T> FilterableListenerDecorator<T> from(Filterable<T> filterable) {
+        return new FilterableListenerDecorator<>(filterable);
     }
 }

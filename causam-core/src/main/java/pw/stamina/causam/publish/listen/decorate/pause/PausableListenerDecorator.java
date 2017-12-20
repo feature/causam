@@ -20,21 +20,39 @@
  * SOFTWARE.
  */
 
-package pw.stamina.causam.publish.listen.decorate;
+package pw.stamina.causam.publish.listen.decorate.pause;
 
-import pw.stamina.causam.event.Cancellable;
 import pw.stamina.causam.publish.listen.Listener;
+import pw.stamina.causam.publish.listen.decorate.AbstractInstanceAssociatedListenerDecorator;
 
-public final class IgnoreCancelledListenerDecorator<T extends Cancellable> implements ListenerDecorator<T> {
+/**
+ * Decorates a {@link Listener} to adopt pausable functionality.
+ *
+ * @param <T> the event type accept by the decorated listener
+ */
+public final class PausableListenerDecorator<T>
+        extends AbstractInstanceAssociatedListenerDecorator<T, Pausable> {
+
+    private PausableListenerDecorator(Pausable pausable) {
+        super(Pausable.class, pausable);
+    }
 
     @Override
     public Listener<T> decorate(Listener<T> decorating) {
         return event -> {
-            if (event.isCancelled()) {
+            if (decoration.isPaused()) {
                 return;
             }
 
             decorating.publish(event);
         };
+    }
+
+    public static <T> PausableListenerDecorator<T> simple() {
+        return new PausableListenerDecorator<>(Pausable.simple());
+    }
+
+    public static <T> PausableListenerDecorator<T> atomic() {
+        return new PausableListenerDecorator<>(Pausable.atomic());
     }
 }

@@ -22,6 +22,7 @@
 
 package pw.stamina.causam.publish;
 
+import pw.stamina.causam.event.Cancellable;
 import pw.stamina.causam.subscribe.Subscription;
 
 import javax.inject.Inject;
@@ -29,10 +30,22 @@ import javax.inject.Inject;
 public final class ImmediatePublisher implements Publisher {
 
     @Inject
-    ImmediatePublisher() {}
+    ImmediatePublisher() {
+    }
 
     @Override
     public <T> void publish(T event, Iterable<Subscription<T>> subscriptions) {
         subscriptions.forEach(subscription -> subscription.publish(event));
+    }
+
+    @Override
+    public <T extends Cancellable> void publishCancellable(T event, Iterable<Subscription<T>> subscriptions) {
+        subscriptions.forEach(subscription -> {
+            if (subscription.ignoreCancelled() && event.isCancelled()) {
+                return;
+            }
+
+            subscription.publish(event);
+        });
     }
 }

@@ -35,6 +35,8 @@ public interface Subscription<T> {
 
     KeySelector getKeySelector();
 
+    boolean ignoreCancelled();
+
     void publish(T event) throws PublicationException;
 
     static <T> SubscriptionBuilder<T> builder() {

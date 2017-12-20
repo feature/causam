@@ -29,13 +29,13 @@ import pw.stamina.causam.scan.method.model.Subscriber;
 import pw.stamina.causam.select.CachingSubscriptionSelectorServiceDecorator;
 import pw.stamina.causam.select.SubscriptionSelectorService;
 
-public final class Test {
+public final class Demo {
 
     public static void main(String[] args) {
         EventBus eventBus = createEventBus();
 
         eventBus.emit("Test message 1");
-        Test object = new Test();
+        Demo object = new Demo();
         eventBus.register(object);
 
         eventBus.emit("Test message 1");

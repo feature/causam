@@ -66,7 +66,7 @@ public final class NullRejectingSubscriptionRegistryDecorator implements Subscri
     @Override
     public boolean unregister(Subscription<?> subscription) {
         Objects.requireNonNull(subscription, "subscription");
-        return registry.register(subscription);
+        return registry.unregister(subscription);
     }
 
     @Override

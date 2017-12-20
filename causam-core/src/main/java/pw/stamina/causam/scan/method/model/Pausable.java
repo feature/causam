@@ -22,7 +22,7 @@
 
 package pw.stamina.causam.scan.method.model;
 
-import pw.stamina.causam.publish.listen.decorate.pause.PausableInstanceAssociatedListenerDecorator;
+import pw.stamina.causam.publish.listen.decorate.pause.PausableListenerDecorator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -38,16 +38,16 @@ public @interface Pausable {
 
     enum PausableType {
         NONE(() -> null),
-        SIMPLE(PausableInstanceAssociatedListenerDecorator::simple),
-        ATOMIC(PausableInstanceAssociatedListenerDecorator::atomic);
+        SIMPLE(PausableListenerDecorator::simple),
+        ATOMIC(PausableListenerDecorator::atomic);
 
-        private final Supplier<PausableInstanceAssociatedListenerDecorator> factory;
+        private final Supplier<PausableListenerDecorator> factory;
 
-        PausableType(Supplier<PausableInstanceAssociatedListenerDecorator> factory) {
+        PausableType(Supplier<PausableListenerDecorator> factory) {
             this.factory = factory;
         }
 
-        public final PausableInstanceAssociatedListenerDecorator create() {
+        public final PausableListenerDecorator create() {
             return factory.get();
         }
     }

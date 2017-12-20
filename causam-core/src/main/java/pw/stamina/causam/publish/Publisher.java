@@ -22,6 +22,7 @@
 
 package pw.stamina.causam.publish;
 
+import pw.stamina.causam.event.Cancellable;
 import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
 import pw.stamina.causam.subscribe.Subscription;
 
@@ -30,6 +31,8 @@ import java.util.Objects;
 public interface Publisher {
 
     <T> void publish(T event, Iterable<Subscription<T>> subscriptions);
+
+    <T extends Cancellable> void publishCancellable(T event, Iterable<Subscription<T>> subscriptions);
 
     static Publisher immediate() {
         return new ImmediatePublisher();

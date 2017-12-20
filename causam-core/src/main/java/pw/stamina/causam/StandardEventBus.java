@@ -1,5 +1,6 @@
 package pw.stamina.causam;
 
+import pw.stamina.causam.event.Cancellable;
 import pw.stamina.causam.event.EventEmitter;
 import pw.stamina.causam.registry.SubscriptionRegistry;
 import pw.stamina.causam.scan.method.MethodSubscriberScanningStrategy;
@@ -28,7 +29,11 @@ public final class StandardEventBus implements EventBus {
 
     @Override
     public <T> boolean emit(T event) {
-        return emitter.emit(event);
+        if (event instanceof Cancellable) {
+            return emitter.emitCancellable((Cancellable) event);
+        } else {
+            return emitter.emit(event);
+        }
     }
 
     @Override

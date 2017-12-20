@@ -32,8 +32,9 @@ import java.util.Objects;
 public final class SubscriptionBuilder<T> {
     private Object subscriber;
     private String identifier;
-    private Listener<T> listener;
     private KeySelector keySelector;
+    private boolean ignoreCancelled;
+    private Listener<T> listener;
     private final ListenerDecoratorContainer<T> decorators;
 
     public SubscriptionBuilder() {
@@ -55,6 +56,11 @@ public final class SubscriptionBuilder<T> {
     public SubscriptionBuilder<T> selector(KeySelector keySelector) {
         Objects.requireNonNull(keySelector, "keySelector");
         this.keySelector = keySelector;
+        return this;
+    }
+
+    public SubscriptionBuilder<T> ignoreCancelled() {
+        ignoreCancelled = true;
         return this;
     }
 
@@ -80,6 +86,7 @@ public final class SubscriptionBuilder<T> {
                         subscriber,
                         identifier,
                         keySelector,
+                        ignoreCancelled,
                         decoratedListener);
 
         if (decorators.shouldCreateProxy()) {

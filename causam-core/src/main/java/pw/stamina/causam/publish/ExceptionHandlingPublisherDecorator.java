@@ -22,6 +22,7 @@
 
 package pw.stamina.causam.publish;
 
+import pw.stamina.causam.event.Cancellable;
 import pw.stamina.causam.publish.exception.PublicationException;
 import pw.stamina.causam.publish.exception.PublicationExceptionHandler;
 import pw.stamina.causam.subscribe.Subscription;
@@ -47,5 +48,10 @@ public final class ExceptionHandlingPublisherDecorator implements Publisher {
             //TODO: Provide PublicationExceptionContext
             exceptionHandlers.handleException(e, null);
         }
+    }
+
+    @Override
+    public <T extends Cancellable> void publishCancellable(T event, Iterable<Subscription<T>> subscriptions) {
+        publish(event, subscriptions);
     }
 }

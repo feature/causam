@@ -27,7 +27,7 @@ import pw.stamina.causam.scan.ScanFailedException;
 import java.lang.reflect.Method;
 
 public final class IllegalSubscriberMethodException extends ScanFailedException {
-    private final Method method;
+    private final transient Method method;
 
     IllegalSubscriberMethodException(Method method, String message) {
         super(message);

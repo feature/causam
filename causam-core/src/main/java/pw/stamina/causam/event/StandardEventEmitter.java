@@ -31,4 +31,19 @@ public final class StandardEventEmitter implements EventEmitter {
         publisher.publish(event, subscriptions);
         return true;
     }
+
+    @Override
+    public <T extends Cancellable> boolean emitCancellable(T event) {
+        @SuppressWarnings("unchecked")
+        Class<T> key = (Class<T>) event.getClass();
+
+        Collection<Subscription<T>> subscriptions = registry.selectSubscriptions(key);
+
+        if (subscriptions.isEmpty()) {
+            return false;
+        }
+
+        publisher.publishCancellable(event, subscriptions);
+        return true;
+    }
 }

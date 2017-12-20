@@ -32,15 +32,18 @@ final class ImmutableSubscription<T> implements Subscription<T> {
     private final Object subscriber;
     private final String identifier;
     private final KeySelector keySelector;
+    private final boolean ignoreCancelled;
     private final Listener<T> listener;
 
     ImmutableSubscription(Object subscriber,
                           String identifier,
                           KeySelector keySelector,
+                          boolean ignoreCancelled,
                           Listener<T> listener) {
         this.subscriber = subscriber;
         this.identifier = identifier;
         this.keySelector = keySelector;
+        this.ignoreCancelled = ignoreCancelled;
         this.listener = listener;
     }
 
@@ -57,6 +60,11 @@ final class ImmutableSubscription<T> implements Subscription<T> {
     @Override
     public KeySelector getKeySelector() {
         return keySelector;
+    }
+
+    @Override
+    public boolean ignoreCancelled() {
+        return ignoreCancelled;
     }
 
     @Override
