@@ -1,54 +1,36 @@
-buildscript {
-    ext {
-        junit_gradle_plugin_version = '1.0.1'
-    }
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "org.junit.platform:junit-platform-gradle-plugin:$junit_gradle_plugin_version"
-    }
-}
-
-group 'pw.stamina.causam'
+group = 'pw.stamina.causam'
 version = '1.0.0-SNAPSHOT'
 
-subprojects {
-    group = rootProject.group
-    version = rootProject.version
+apply plugin: 'java-library'
+apply plugin: 'maven'
 
-    apply plugin: 'java-library'
-    apply plugin: 'maven'
-    apply plugin: 'org.junit.platform.gradle.plugin'
+tasks.withType(JavaCompile) {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.encoding = 'UTF-8'
+}
 
-    tasks.withType(JavaCompile) {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-        options.encoding = 'UTF-8'
-    }
+ext {
+    junit_jupiter_version = '5.0.1'
+    mockito_version = '2.10.0'
+}
 
-    ext {
-        junit_jupiter_version = '5.0.1'
-        mockito_version = '2.10.0'
-    }
+repositories {
+    mavenCentral()
+}
 
-    repositories {
-        mavenCentral()
-    }
+dependencies {
+    api 'javax.inject:javax.inject:1'
 
-    dependencies {
-        api 'javax.inject:javax.inject:1'
-        testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
-        testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
-        testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
-        testImplementation "org.mockito:mockito-core:$mockito_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
 
-        //TODO: Temporary
-        testImplementation 'name.falgout.jeffrey.testing.junit5:mockito-extension:1.0.0'
+    testImplementation "org.mockito:mockito-core:$mockito_version"
 
-        // To avoid compiler warnings about @API annotations in JUnit code
-        testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
-    }
+    //TODO: Temporary
+    testImplementation 'name.falgout.jeffrey.testing.junit5:mockito-extension:1.0.0'
+
+    // To avoid compiler warnings about @API annotations in JUnit code
+    testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
 }

@@ -1,5 +1,3 @@
 rootProject.name = 'causam'
 
-include 'causam-core',
-        'causam-guice'
 

@@ -1,8 +1,0 @@
-ext {
-    guice_version = '4.1.0'
-}
-
-dependencies {
-    api project(':causam-core')
-    api "com.google.inject:guice:$guice_version"
-}
