@@ -11,8 +11,10 @@ tasks.withType(JavaCompile) {
 }
 
 ext {
-    junit_jupiter_version = '5.0.1'
-    mockito_version = '2.10.0'
+    junit_platform_version = '1.1.0'
+    junit_jupiter_version = '5.1.0'
+
+    mockito_version = '2.18.0'
 }
 
 repositories {
@@ -22,14 +24,14 @@ repositories {
 dependencies {
     api 'javax.inject:javax.inject:1'
 
+    testImplementation "org.junit.platform:junit-platform-runner:$junit_platform_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
+    runtimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
+
 
     testImplementation "org.mockito:mockito-core:$mockito_version"
-
-    //TODO: Temporary
-    testImplementation 'name.falgout.jeffrey.testing.junit5:mockito-extension:1.0.0'
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockito_version"
 
     // To avoid compiler warnings about @API annotations in JUnit code
     testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
